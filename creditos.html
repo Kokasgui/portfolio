@@ -1,0 +1,370 @@
+<!DOCTYPE html>
+<html lang="pt-PT">
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+
+    <!-- O título da página web -->
+    <title>Créditos | Guilherme Costa</title>
+
+    <!-- Gerado através de SEOptimer (Free Meta Tag Generator) (https://www.seoptimer.com/meta-tag-generator) -->
+    <meta name="title" content="Guilherme Costa">
+    <meta name="description"
+        content="Website pessoal de Guilherme Costa. Aqui podes consultar vários dos projetos em que ele participou e contactá-lo para mais informações">
+    <meta name="keywords" content="portfolio, design, web, jogos, experimental">
+    <meta name="robots" content="index, follow">
+    <meta http-equiv="Content-Type" content="text/html; charset=utf-8">
+    <meta name="language" content="Portuguese">
+    <meta name="author" content="Guilherme Costa">
+
+    <!-- Gerado através de RealFaviconGenerator (https://realfavicongenerator.net/) -->
+    <link rel="icon" type="image/png" href="./assets/favicon/favicon-96x96.png" sizes="96x96" />
+    <link rel="icon" type="image/svg+xml" href="./assets/favicon/favicon.svg" />
+    <link rel="shortcut icon" href="./assets/favicon/favicon.ico" />
+    <link rel="apple-touch-icon" sizes="180x180" href="./assets/favicon/apple-touch-icon.png" />
+    <meta name="apple-mobile-web-app-title" content="Guilherme Costa" />
+    <link rel="manifest" href="./assets/favicon/site.webmanifest" />
+
+    <!-- Tenta pré-carregar os estilos e o código para que o site funcione da melhor forma -->
+    <link rel="preload" href="./assets/css/style.css" as="style">
+    <link rel="preload" href="./assets/js/main.js" as="script">
+
+    <!-- A minha folha de estilos personalizada -->
+    <link rel="stylesheet" href="./assets/css/style.css">
+
+    <!-- As fontes do Google (Funnel Sans, Funnel Display) -->
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link
+        href="https://fonts.googleapis.com/css2?family=Funnel+Display:wght@300..800&family=Funnel+Sans:ital,wght@0,300..800;1,300..800&display=swap"
+        rel="stylesheet">
+
+    <!-- Ícones do Font Awesome -->
+    <link href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/7.0.1/css/all.min.css" rel="stylesheet">
+</head>
+
+<body>
+    <span id="reduced-motion-detector"></span>
+
+    <!-------------------------------------------- EFEITOS SONOROS ----------------------------------------------->
+    <div id="sound-effects">
+        <audio id="mover" src="./assets/audio/mover.mp3" preload="auto"></audio>
+        <audio id="moverSeccao-checkbox" src="./assets/audio/moverSecção-checkbox.mp3" preload="auto"></audio>
+        <audio id="popups" src="./assets/audio/popups.mp3" preload="auto"></audio>
+        <audio id="range" src="./assets/audio/range.mp3" preload="auto"></audio>
+        <audio id="recuar" src="./assets/audio/recuar.mp3" preload="auto"></audio>
+        <audio id="selecionar" src="./assets/audio/selecionar.mp3" preload="auto"></audio>
+    </div>
+
+    <div id="loading">
+        <span class="loading-icon"></span>
+    </div>
+
+    <!----------------------------------------- POPUP DE SAÍDA ----------------------------------------------->
+    <div id="exit-popup" aria-hidden="true">
+        <div>
+            <h2>Queres mesmo sair?</h2>
+            <p>Vais perder acesso à navegação por comando de jogo!</p>
+            <div>
+                <label for="remember-exit">Não mostrar mais este aviso</label>
+                <input type="checkbox" name="controller.rememberExit" id="controller.rememberExit-clone" tabindex="-1">
+            </div>
+            <div>
+                <span class="button-link">
+                    <button id="cancel" tabindex="-1">Cancelar</button>
+                </span>
+                <span class="button-link">
+                    <button id="confirm" tabindex="-1">Confirmar</button>
+                </span>
+            </div>
+        </div>
+    </div>
+
+    <!----------------------------------------- OPÇÕES DE ACESSIBILIDADE ------------------------------------------>
+    <div id="options" aria-hidden="true">
+        <span id="options-icon">
+            <button type="button" aria-label="Sair das Opções de Acessibilidade" tabindex="-1"></button>
+        </span>
+
+        <div>
+            <fieldset>
+                <legend>Opções gerais</legend>
+                <div>
+                    <label for="general-scrollButtons">Botões de scroll</label>
+                    <input type="checkbox" checked name="general.scrollButtons" id="general-scrollButtons"
+                        tabindex="-1">
+                </div>
+                <div>
+                    <label for="general-soundEffects">Efeitos sonoros</label>
+                    <input type="checkbox" checked name="general.soundEffects" id="general-soundEffects" tabindex="-1">
+                </div>
+            </fieldset>
+
+            <fieldset>
+                <legend>Comando de jogo</legend>
+                <div>
+                    <label for="controller-holdDelay">Atraso ao pressionar um botão</label>
+                    <div>
+                        <output id="gamepad-hold-delay" aria-hidden="true">VALUE</output>
+                        <input type="range" min="450" step="150" max="900" value="600" name="controller.holdDelay"
+                            id="controller-holdDelay" tabindex="-1">
+                    </div>
+                </div>
+                <div>
+                    <label for="controller-holdInterval">Intervalo de pressionar um botão</label>
+                    <div>
+                        <output id="gamepad-hold-interval" aria-hidden="true">VALUE</output>
+                        <input type="range" min="150" step="100" max="450" value="150" name="controller.holdInterval"
+                            id="controller-holdInterval" tabindex="-1">
+                    </div>
+                </div>
+                <div>
+                    <label for="remember-exit">Saltar aviso de saída do website</label>
+                    <input type="checkbox" name="controller.rememberExit" id="controller.rememberExit" tabindex="-1">
+                </div>
+
+            </fieldset>
+        </div>
+    </div>
+
+    <!-------------------------------- CABEÇALHO ------------------------------->
+    <header>
+        <!-- Gradiente -->
+        <div class="blur-gradient">
+            <div></div>
+            <div></div>
+            <div></div>
+            <div></div>
+            <div></div>
+        </div>
+        <a id="jump-to-content" href="#main">Saltar para o conteúdo principal</a>
+
+        <!-- Logo/Título do site -->
+        <a class="main-logo" href="./" aria-label="Ir para a página inicial">Guilherme Costa</a>
+
+        <!-- Botão e menu de navegação -->
+
+        <span id="background" class="menu-closed"></span>
+
+        <!-- Não coloquei <nav> porque assim era mais um item que o PC tinha de ler -->
+        <div id="main-nav">
+            <span id="nav-icon">
+                <button type="button" aria-label="Menu de navegação" aria-expanded="false"></button>
+            </span>
+            <!-- Lista de páginas -->
+            <span id="nav-list">
+
+                <ul aria-hidden="true">
+                    <li aria-labelledby="accessibility-button"><button id="accessibility-button"
+                            aria-label="Opções de Acessibilidade" tabindex="-1">
+                            <i class="fa-solid fa-universal-access"></i> Opções</button></li>
+                    <li><a href="./" tabindex="-1">Início</a></li>
+                    <li><a href="./portfolio.html" tabindex="-1">Portfólio</a></li>
+                    <li><a href="./sobre.html" tabindex="-1">Sobre mim</a></li>
+                    <li><a href="./contactos.html" tabindex="-1">Contactos</a></li>
+                </ul>
+            </span>
+        </div>
+    </header>
+
+    <!-- ========================= CONTEÚDO PRINCIPAL =============================== -->
+    <main id="main">
+        <!-- Secção hero -->
+        <section tabindex="-1" class="mouse-focus">
+            <h1>Créditos</h1>
+
+            <!-- <h2>Desenvolvimento</h2>
+            <ul>
+                <li>Guilherme Costa</li>
+            </ul>
+            <h2>Fotografias</h2>
+            <ul>
+                <li>Ana Durão</li>
+            </ul> -->
+
+
+
+            <h2>Ficha Técnica</h2>
+            <ul>
+                <li><strong>Instituição:</strong> Faculdade de Belas Artes da Universidade do Porto</li>
+                <li><strong>Licenciatura:</strong> Design de Comunicação</li>
+                <li><strong>Ano letivo:</strong> 2025/26</li>
+
+                <!-- <br>
+
+                <li><strong>Discente:</strong> Guilherme Costa</li>
+                <li>
+                    <strong>Docentes:</strong>
+                    <ul>
+                        <li>Professora Cristina Ferreira</li>
+                        <li>Professor Miguel Carvalhais</li>
+                        <li>Professor Rui Vitorino Santos</li>
+                    </ul>
+                </li> -->
+            </ul>
+
+        </section>
+        <section tabindex="-1" class="mouse-focus">
+            <h2>Testers</h2>
+            <ul>
+                <li>Ana Catarina Rocha</li>
+                <li>Ana Coelho</li>
+                <li>Professor Bruno Giesteira</li>
+                <li>Carolina Luís</li>
+                <li>Inês Cruz</li>
+                <li>Iria Paulina</li>
+                <li>João Barbosa</li>
+                <li>Lara Portelinha</li>
+                <li>Ricardo Costa</li>
+                <li>Sofia Teixeira</li>
+                <li>Professor Tiago Alves</li>
+            </ul>
+        </section>
+
+        <section tabindex="-1" class="mouse-focus">
+            <h2>Outros agradecimentos</h2>
+            <h3>Professores</h3>
+            <ul>
+                <li>Professor Bruno Giesteira</li>
+                <li>Professora Cristina Ferreira</li>
+                <li>Professor Miguel Carvalhais</li>
+                <li>Professor Rui Vitorino Santos</li>
+                <li>Professor Tiago Alves</li>
+            </ul>
+
+            <br>
+
+            <h3>Comunidades</h3>
+            <ul>
+                <li>Servidor Discord DevPT</li>
+            </ul>
+
+            <br>
+
+            <h3>Recursos externos</h3>
+            <div id="software-technologies">
+                <ul class="software-list">
+                    <h4>Ícones</h4>
+                    <li>
+                        <a href="https://fontawesome.com/" target="_blank" rel="noopener noreferrer"
+                            software="fontawesome">Font Awesome</a>
+                    </li>
+                </ul>
+
+                <ul class="software-list">
+                    <h4>Documentação</h4>
+                    <li>
+                        <a href="https://developer.mozilla.org/" target="_blank" rel="noopener noreferrer"
+                            software="mdn">MDN Web Docs</a>
+                    </li>
+                    <li>
+                        <a href="https://threejs.org/docs/" target="_blank" rel="noopener noreferrer"
+                            software="three-js">Three.js</a>
+                    </li>
+                </ul>
+
+                <ul class="software-list">
+                    <h4>Código auxiliar</h4>
+                    <li>
+                        <a href="https://realfavicongenerator.net/" target="_blank" rel="noopener noreferrer"
+                            software="realfavicon">RealFaviconGenerator</a>
+                    </li>
+                    <li>
+                        <a href="https://www.seoptimer.com/pt/free-tools" target="_blank" rel="noopener noreferrer"
+                            software="seoptimer">SEOptimer</a>
+                    </li>
+                </ul>
+
+                <ul class="software-list">
+                    <h4>Editores</h4>
+                    <li>
+                        <a href="https://bennettfeely.com/clippy/" target="_blank" rel="noopener noreferrer"
+                            software="clippy">Clippy</a>
+                    </li>
+                    <li>
+                        <a href="https://yqnn.github.io/svg-path-editor/" target="_blank" rel="noopener noreferrer"
+                            software="svg-path-editor">SvgPathEditor</a>
+                    </li>
+                </ul>
+            </div>
+        </section>
+
+    </main>
+
+    <div id="scroll-n-actions">
+        <!------------------------------- BOTÕES SCROLL ------------------------------>
+        <div id="scroll-buttons">
+            <span id="scroll-up">
+                <button tabindex="-1" aria-label="Navegar para cima" aria-hidden="true">
+                    <i class="fa-solid fa-arrow-up-long"></i>
+                </button>
+            </span>
+            <span id="scroll-down">
+                <button tabindex="-1" aria-label="Navegar para baixo" aria-hidden="true">
+                    <i class="fa-solid fa-arrow-down-long"></i>
+                </button>
+            </span>
+        </div>
+
+        <!--------------------------- BARRA DE AÇÕES ------------------------------>
+        <div id="actionbar" aria-hidden="true">
+            <div>
+                Ações principais
+            </div>
+
+            <div id="main-actions">
+                <!-- Aqui serão adicionados os botões com JavaScript -->
+            </div>
+        </div>
+    </div>
+
+    <!-------------------------------- RODAPÉ ----------------------------------->
+    <footer tabindex="-1" class="mouse-focus">
+        <div>
+            <!-- Link página principal -->
+            <a href="./" class="main-logo" aria-label="Ir para a página inicial">Guilherme Costa</a>
+
+            <!-- Lista de ícones das redes sociais -->
+            <ul id="social-media" aria-label="Perfis de redes sociais">
+                <li>
+                    <a href="https://www.linkedin.com/in/guiccosta/" target="_blank" aria-label="Perfil do LinkedIn">
+                        <i class="fa-brands fa-linkedin"></i>
+                    </a>
+                </li>
+                <li>
+                    <a href="https://github.com/Kokasgui" target="_blank" aria-label="Perfil do GitHub">
+                        <i class="fa-brands fa-github"></i>
+                    </a>
+                </li>
+                <li>
+                    <a href="https://kokasgui.itch.io/" target="_blank" aria-label="Perfil do itch.io">
+                        <i class="fa-brands fa-itch-io"></i>
+                    </a>
+                </li>
+            </ul>
+
+            <!-- Botão de ir para o topo da página -->
+            <span class="button-link" id="go-to-top">
+                <a href="#main">Ir para o topo</a>
+            </span>
+
+        </div>
+
+        <!-- Link para email -->
+        <a href="mailto:guiccosta04@gmail.com" aria-label="Envia-me um e-mail">guiccosta04@gmail.com</a>
+        <!-- guiccosta04 (arroba) gmail (ponto) com -->
+
+        <!-- Link para créditos do website -->
+        <a href="" id="credits-link">Créditos do website</a>
+
+
+
+        <!-- <span id="copyright">© 2026 Guilherme Costa. Todos os direitos reservados.</span> -->
+    </footer>
+
+    <!-- Os scripts ficam aqui -->
+    <script type="module" src="./assets/js/main.js"></script>
+</body>
+
+</html>

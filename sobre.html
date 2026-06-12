@@ -1,0 +1,396 @@
+<!DOCTYPE html>
+<html lang="pt-PT">
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+
+    <!-- O título da página web -->
+    <title>Sobre mim | Guilherme Costa</title>
+
+    <!-- Gerado através de SEOptimer (Free Meta Tag Generator) (https://www.seoptimer.com/meta-tag-generator) -->
+    <meta name="title" content="Guilherme Costa">
+    <meta name="description"
+        content="Website pessoal de Guilherme Costa. Aqui podes consultar vários dos projetos em que ele participou e contactá-lo para mais informações">
+    <meta name="keywords" content="portfolio, design, web, jogos, experimental">
+    <meta name="robots" content="index, follow">
+    <meta http-equiv="Content-Type" content="text/html; charset=utf-8">
+    <meta name="language" content="Portuguese">
+    <meta name="author" content="Guilherme Costa">
+
+    <!-- Gerado através de RealFaviconGenerator (https://realfavicongenerator.net/) -->
+    <link rel="icon" type="image/png" href="./assets/favicon/favicon-96x96.png" sizes="96x96" />
+    <link rel="icon" type="image/svg+xml" href="./assets/favicon/favicon.svg" />
+    <link rel="shortcut icon" href="./assets/favicon/favicon.ico" />
+    <link rel="apple-touch-icon" sizes="180x180" href="./assets/favicon/apple-touch-icon.png" />
+    <meta name="apple-mobile-web-app-title" content="Guilherme Costa" />
+    <link rel="manifest" href="./assets/favicon/site.webmanifest" />
+
+    <!-- Tenta pré-carregar os estilos e o código para que o site funcione da melhor forma -->
+    <link rel="preload" href="./assets/css/style.css" as="style">
+    <link rel="preload" href="./assets/js/main.js" as="script">
+
+    <!-- A minha folha de estilos personalizada -->
+    <link rel="stylesheet" href="./assets/css/style.css">
+
+    <!-- As fontes do Google (Funnel Sans, Funnel Display) -->
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link
+        href="https://fonts.googleapis.com/css2?family=Funnel+Display:wght@300..800&family=Funnel+Sans:ital,wght@0,300..800;1,300..800&display=swap"
+        rel="stylesheet">
+
+    <!-- Ícones do Font Awesome -->
+    <link href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/7.0.1/css/all.min.css" rel="stylesheet">
+</head>
+
+<body>
+    <span id="reduced-motion-detector"></span>
+
+    <!-------------------------------------------- EFEITOS SONOROS ----------------------------------------------->
+    <div id="sound-effects">
+        <audio id="mover" src="./assets/audio/mover.mp3" preload="auto"></audio>
+        <audio id="moverSeccao-checkbox" src="./assets/audio/moverSecção-checkbox.mp3" preload="auto"></audio>
+        <audio id="popups" src="./assets/audio/popups.mp3" preload="auto"></audio>
+        <audio id="range" src="./assets/audio/range.mp3" preload="auto"></audio>
+        <audio id="recuar" src="./assets/audio/recuar.mp3" preload="auto"></audio>
+        <audio id="selecionar" src="./assets/audio/selecionar.mp3" preload="auto"></audio>
+    </div>
+
+    <div id="loading">
+        <span class="loading-icon"></span>
+    </div>
+
+    <!----------------------------------------- POPUP DE SAÍDA ----------------------------------------------->
+    <div id="exit-popup" aria-hidden="true">
+        <div>
+            <h2>Queres mesmo sair?</h2>
+            <p>Vais perder acesso à navegação por comando de jogo!</p>
+            <div>
+                <label for="remember-exit">Não mostrar mais este aviso</label>
+                <input type="checkbox" name="controller.rememberExit" id="controller.rememberExit-clone" tabindex="-1">
+            </div>
+            <div>
+                <span class="button-link">
+                    <button id="cancel" tabindex="-1">Cancelar</button>
+                </span>
+                <span class="button-link">
+                    <button id="confirm" tabindex="-1">Confirmar</button>
+                </span>
+            </div>
+        </div>
+    </div>
+
+    <!----------------------------------------- OPÇÕES DE ACESSIBILIDADE ------------------------------------------>
+    <div id="options" aria-hidden="true">
+        <span id="options-icon">
+            <button type="button" aria-label="Sair das Opções de Acessibilidade" tabindex="-1"></button>
+        </span>
+
+        <div>
+            <fieldset>
+                <legend>Opções gerais</legend>
+                <div>
+                    <label for="general-scrollButtons">Botões de scroll</label>
+                    <input type="checkbox" checked name="general.scrollButtons" id="general-scrollButtons"
+                        tabindex="-1">
+                </div>
+                <div>
+                    <label for="general-soundEffects">Efeitos sonoros</label>
+                    <input type="checkbox" checked name="general.soundEffects" id="general-soundEffects" tabindex="-1">
+                </div>
+            </fieldset>
+
+            <fieldset>
+                <legend>Comando de jogo</legend>
+                <div>
+                    <label for="controller-holdDelay">Atraso ao pressionar um botão</label>
+                    <div>
+                        <output id="gamepad-hold-delay" aria-hidden="true">VALUE</output>
+                        <input type="range" min="450" step="150" max="900" value="600" name="controller.holdDelay"
+                            id="controller-holdDelay" tabindex="-1">
+                    </div>
+                </div>
+                <div>
+                    <label for="controller-holdInterval">Intervalo de pressionar um botão</label>
+                    <div>
+                        <output id="gamepad-hold-interval" aria-hidden="true">VALUE</output>
+                        <input type="range" min="150" step="100" max="450" value="150" name="controller.holdInterval"
+                            id="controller-holdInterval" tabindex="-1">
+                    </div>
+                </div>
+                <div>
+                    <label for="remember-exit">Saltar aviso de saída do website</label>
+                    <input type="checkbox" name="controller.rememberExit" id="controller.rememberExit" tabindex="-1">
+                </div>
+
+            </fieldset>
+        </div>
+    </div>
+
+    <!-------------------------------- CABEÇALHO ------------------------------->
+    <header>
+        <!-- Gradiente -->
+        <div class="blur-gradient">
+            <div></div>
+            <div></div>
+            <div></div>
+            <div></div>
+            <div></div>
+        </div>
+        <a id="jump-to-content" href="#main">Saltar para o conteúdo principal</a>
+
+        <!-- Logo/Título do site -->
+        <a class="main-logo" href="./" aria-label="Ir para a página inicial">Guilherme Costa</a>
+
+        <!-- Botão e menu de navegação -->
+
+        <span id="background" class="menu-closed"></span>
+
+        <!-- Não coloquei <nav> porque assim era mais um item que o PC tinha de ler -->
+        <div id="main-nav">
+            <span id="nav-icon">
+                <button type="button" aria-label="Menu de navegação" aria-expanded="false"></button>
+            </span>
+            <!-- Lista de páginas -->
+            <span id="nav-list">
+
+                <ul aria-hidden="true">
+                    <li aria-labelledby="accessibility-button"><button id="accessibility-button"
+                            aria-label="Opções de Acessibilidade" tabindex="-1">
+                            <i class="fa-solid fa-universal-access"></i> Opções</button></li>
+                    <li><a href="./" tabindex="-1">Início</a></li>
+                    <li><a href="./portfolio.html" tabindex="-1">Portfólio</a></li>
+                    <li><a href="./sobre.html" aria-current="page" tabindex="-1">Sobre mim</a></li>
+                    <li><a href="./contactos.html" tabindex="-1">Contactos</a></li>
+                </ul>
+            </span>
+        </div>
+    </header>
+
+    <!-- ========================= CONTEÚDO PRINCIPAL =============================== -->
+    <main id="main">
+        <!-- Secção texto introdução -->
+        <section tabindex="-1" class="mouse-focus">
+            <h1>Sobre mim</h1>
+
+            <div>
+                <div>
+                    <p>
+                        Chamo-me Guilherme Costa, tenho 21 anos, e sou natural de Leiria. Sou designer desde 2026, tendo
+                        feito a minha licenciatura em Design de Comunicação na Faculdade de Belas Artes da Universidade
+                        do Porto (FBAUP).
+                    </p>
+                    <p>
+                        Desde pequeno que tenho uma grande paixão por videojogos e pelas artes do espetáculo,
+                        nomeadamente o teatro e a música. Vejo-os como fatores fulcrais durante a moldagem da minha
+                        personalidade. Foi o contacto com estas áreas que me permitiu desenvolver o meu lado mais
+                        experimental, que quer sempre aprender mais sobre as áreas de que gosto, nomeadamente a área das
+                        tecnologias digitais.
+                    </p>
+                </div>
+                <div id="profile-photo">
+                    <picture>
+                        <source srcset="./assets/images/profile_small.jpg" type="image/jpg"
+                            media="screen and (max-width: 700px)">
+                        <img src="./assets/images/profile.jpg" alt="Fotografia de Guilherme Costa">
+                    </picture>
+                </div>
+            </div>
+        </section>
+
+        <!-- Secção tópicos -->
+        <section id="profile-experience" tabindex="-1" class="mouse-focus">
+            <div>
+                <div>
+                    <h2>Educação</h2>
+                    <ul>
+                        <li>
+                            <h4>Design de Comunicação (2022-2026)</h4>
+                            <a target="_blank" href="https://www.up.pt/fbaup/">
+                                <p>Faculdade de Belas Artes da Universidade do Porto</p>
+                            </a>
+                        </li>
+                        <li>
+                            <h4>Ciências e Tecnologias (2019-2022)</h4>
+                            <a target="_blank" href="http://www.esds.edu.pt/">
+                                <p>Escola Secundária Domingos Sequeira</p>
+                            </a>
+                        </li>
+                    </ul>
+                </div>
+                <div>
+                    <h2>Tempos livres</h2>
+                    <ul>
+                        <li>Jogar videojogos</li>
+                        <li>Tocar guitarra</li>
+                        <li>Fazer Geocaching</li>
+                        <li>Ler um bom livro</li>
+                    </ul>
+                </div>
+            </div>
+            <div>
+                <div>
+                    <h2>Experiência</h2>
+                    <ul>
+                        <li>
+                            <h4>FBAUP Design Inc. (2025-)</h4>
+                            <p>Designer Júnior</p>
+                        </li>
+                        <li>
+                            <h4>Erva Design (2025-)</h4>
+                            <p>Estagiário, Web Designer</p>
+                        </li>
+                    </ul>
+                </div>
+                <div>
+                    <h2>Outras</h2>
+                    <ul>
+                        <li>Ingressão na Conferência Design for Business (2.ª Edição)</li>
+                        <li>Participação na Global Game Jam 2026</li>
+                    </ul>
+                </div>
+            </div>
+        </section>
+
+        <!-- Secção software -->
+        <section tabindex="-1" class="mouse-focus">
+            <h2>Softwares e tecnologias com que estou confortável</h2>
+
+            <div id="software-technologies">
+                <ul class="software-list">
+                    <h4>Design gráfico</h4>
+                    <li>
+                        <a target="_blank" href="https://www.adobe.com/products/illustrator.html"
+                            software="illustrator">Adobe Illustrator</a>
+                    </li>
+                    <li>
+                        <a target="_blank" href="https://www.adobe.com/products/indesign.html" software="indesign">Adobe
+                            InDesign</a>
+                    </li>
+                    <li>
+                        <a target="_blank" href="https://www.adobe.com/products/photoshop.html"
+                            software="photoshop">Adobe Photoshop</a>
+                    </li>
+                    <li>
+                        <a target="_blank" href="https://www.adobe.com/products/premiere.html" software="premiere">Adobe
+                            Premiere</a>
+                    </li>
+                    <li>
+                        <a target="_blank" href="https://www.figma.com/" software="figma">Figma</a>
+                    </li>
+                </ul>
+                <ul class="software-list">
+                    <h4>Programação</h4>
+                    <li>
+                        <a href="https://developer.mozilla.org/en-US/docs/Web/JavaScript" target="_blank"
+                            rel="noopener noreferrer" software="js">JavaScript</a>
+                    </li>
+                    <li>
+                        <a target="_blank" href="https://processing.org/" software="processing">Processing</a>
+                    </li>
+                    <li>
+                        <a target="_blank" href="https://nodejs.org/" software="node-js">Node.js</a>
+                    </li>
+                </ul>
+                <ul class="software-list">
+                    <h4>Design de jogos</h4>
+                    <li>
+                        <a target="_blank" href="https://gdevelop.io/" software="gdevelop">GDevelop</a>
+                    </li>
+                </ul>
+                <ul class="software-list">
+                    <h4>Outros</h4>
+                    <li>
+                        <a target="_blank" href="https://www.blender.org/" software="blender">Blender</a>
+                    </li>
+                    <li>
+                        <a target="_blank" href="https://effecthouse.tiktok.com/" software="effect-house">Effect
+                            House</a>
+                    </li>
+                    <li>
+                        <a target="_blank" href="https://www.reaper.fm/" software="reaper">REAPER</a>
+                    </li>
+                </ul>
+            </div>
+
+        </section>
+
+    </main>
+
+    <div id="scroll-n-actions">
+        <!------------------------------- BOTÕES SCROLL ------------------------------>
+        <div id="scroll-buttons">
+            <span id="scroll-up">
+                <button tabindex="-1" aria-label="Navegar para cima" aria-hidden="true">
+                    <i class="fa-solid fa-arrow-up-long"></i>
+                </button>
+            </span>
+            <span id="scroll-down">
+                <button tabindex="-1" aria-label="Navegar para baixo" aria-hidden="true">
+                    <i class="fa-solid fa-arrow-down-long"></i>
+                </button>
+            </span>
+        </div>
+
+        <!--------------------------- BARRA DE AÇÕES ------------------------------>
+        <div id="actionbar" aria-hidden="true">
+            <div>
+                Ações principais
+            </div>
+
+            <div id="main-actions">
+                <!-- Aqui serão adicionados os botões com JavaScript -->
+            </div>
+        </div>
+    </div>
+
+    <!-------------------------------- RODAPÉ ----------------------------------->
+    <footer tabindex="-1" class="mouse-focus">
+        <div>
+            <!-- Link página principal -->
+            <a href="./" class="main-logo" aria-label="Ir para a página inicial">Guilherme Costa</a>
+
+            <!-- Lista de ícones das redes sociais -->
+            <ul id="social-media" aria-label="Perfis de redes sociais">
+                <li>
+                    <a href="https://www.linkedin.com/in/guiccosta/" target="_blank" aria-label="Perfil do LinkedIn">
+                        <i class="fa-brands fa-linkedin"></i>
+                    </a>
+                </li>
+                <li>
+                    <a href="https://github.com/Kokasgui" target="_blank" aria-label="Perfil do GitHub">
+                        <i class="fa-brands fa-github"></i>
+                    </a>
+                </li>
+                <li>
+                    <a href="https://kokasgui.itch.io/" target="_blank" aria-label="Perfil do itch.io">
+                        <i class="fa-brands fa-itch-io"></i>
+                    </a>
+                </li>
+            </ul>
+
+            <!-- Botão de ir para o topo da página -->
+            <span class="button-link" id="go-to-top">
+                <a href="#main">Ir para o topo</a>
+            </span>
+
+        </div>
+
+        <!-- Link para email -->
+        <a href="mailto:guiccosta04@gmail.com" aria-label="Envia-me um e-mail">guiccosta04@gmail.com</a>
+        <!-- guiccosta04 (arroba) gmail (ponto) com -->
+
+        <!-- Link para créditos do website -->
+        <a href="./creditos.html" id="credits-link">Créditos do website</a>
+
+
+
+        <!-- <span id="copyright">© 2026 Guilherme Costa. Todos os direitos reservados.</span> -->
+    </footer>
+
+    <!-- Os scripts ficam aqui -->
+    <script type="module" src="./assets/js/main.js"></script>
+</body>
+
+</html>
