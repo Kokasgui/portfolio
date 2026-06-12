@@ -80,7 +80,7 @@ function i(e, n) {
 }
 const a = new CSSStyleSheet();
 a.replaceSync(
-    "\n  :host {\n    display: inline-block;\n    height: inherit;\n  }\n\n  canvas {\n    display: inherit;\n    width: inherit;\n    object-fit: inherit;\n    aspect-ratio: inherit;\n    height: inherit;\n }\n\n @media screen and (max-width: 700px) { canvas { width: 100%; }}",
+    "\n  :host {\n    display: inline-block;\n    height: auto;\n  }\n\n  canvas {\n    display: block;\n    width: inherit;\n    object-fit: inherit;\n    aspect-ratio: inherit;\n    height: inherit;\n    overflow-x: visible;\n }\n",
 );
 class o extends HTMLElement {
     static observedAttributes = ["premultipliedalpha"];
