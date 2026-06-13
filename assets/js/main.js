@@ -519,25 +519,27 @@ function ChangeGallerySlide(direction) {
     else if (direction === 1) galleryButton = main.querySelector("#gallery-right button");
 
     // Se o utilizador não tiver ativado a opção de reduzir as animações, anima os botões da galeria
-    if (window.getComputedStyle(reducedMotionDetector).backgroundColor === "rgb(255, 0, 0)")
+    if (window.getComputedStyle(reducedMotionDetector).backgroundColor === "rgb(255, 0, 0)" && galleryButton.disabled === false)
         galleryButton.animate(buttonWiggleAnimation, { duration: 150, iterations: 1 });
 
     // debugger;
 
     // console.log(currentSlideIndex, slidesArray.length - 1);
 
-    if (currentSlideIndex === 0 && direction === -1) {
-        currentSlide.removeAttribute("aria-current");
-        slidesArray[slidesArray.length - 1].setAttribute("aria-current", "true");
-        PlaySound("mover");
-    } else if (currentSlideIndex === slidesArray.length - 1 && direction === 1) {
-        currentSlide.removeAttribute("aria-current");
-        slidesArray[0].setAttribute("aria-current", "true");
-        PlaySound("mover");
+    if ((currentSlideIndex === 0 && direction === -1) || (currentSlideIndex === slidesArray.length - 1 && direction === 1)) {
+        // galleryButton.disabled = true;
+        // return;
     } else {
+        galleryButtons.querySelectorAll("button").forEach((button) => {
+            button.disabled = false;
+        });
         currentSlide.removeAttribute("aria-current");
         slidesArray[currentSlideIndex + direction].setAttribute("aria-current", "true");
         PlaySound("mover");
+    }
+
+    if (currentSlideIndex + direction === 0 || currentSlideIndex + direction === slidesArray.length - 1) {
+        galleryButton.disabled = true;
     }
 }
 
