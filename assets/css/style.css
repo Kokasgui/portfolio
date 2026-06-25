@@ -302,6 +302,14 @@ section > div > * {
     width: 100%;
 }
 
+section ul {
+    list-style-type: none;
+}
+section ul h4 {
+    margin-top: 0.8em;
+    margin-bottom: 0.15em;
+}
+
 /* ------------------------------------------ FORMULÁRIO ----------------------------------------- */
 form {
     display: flex;
@@ -1305,6 +1313,7 @@ header .blur-gradient div:nth-of-type(5) {
     gap: 20px;
     width: 100%;
     padding-left: 24px;
+    flex-shrink: 0;
 }
 
 #options fieldset > div {
@@ -1313,6 +1322,11 @@ header .blur-gradient div:nth-of-type(5) {
 }
 #options fieldset > div div {
     width: unset;
+}
+
+#options label {
+    text-wrap: wrap;
+    text-wrap: pretty;
 }
 
 /* #options li {
@@ -2144,6 +2158,11 @@ section:nth-of-type(even) .project-list li > a:hover {
             animation: none;
         }
     }
+}
+
+/* ------------------------ PÁGINA CRÉDITOS --------------------- */
+section * + h2 {
+    margin-top: 1em;
 }
 
 /* ====================== SCROLL E AÇÕES ========================== */

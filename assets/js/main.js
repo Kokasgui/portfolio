@@ -192,25 +192,27 @@ const softwareList = Array.from(document.querySelectorAll(".software-list a, .so
 softwareList.forEach((software) => {
     const icon = software.getAttribute("software");
 
-    const picture = document.createElement("picture");
+    if (icon) {
+        const picture = document.createElement("picture");
 
-    const jsURL = import.meta.url;
-    // console.log(jsURL);
-    const newURL = new URL("../software-icons", jsURL);
-    // console.log(newURL.href);
+        const jsURL = import.meta.url;
+        // console.log(jsURL);
+        const newURL = new URL("../software-icons", jsURL);
+        // console.log(newURL.href);
 
-    const sourceSVG = document.createElement("source");
-    sourceSVG.srcset = `${newURL.href}/svg/${icon}.svg`;
-    sourceSVG.type = "image/svg+xml";
+        const sourceSVG = document.createElement("source");
+        sourceSVG.srcset = `${newURL.href}/svg/${icon}.svg`;
+        sourceSVG.type = "image/svg+xml";
 
-    const img = document.createElement("img");
-    img.src = `${newURL.href}/png/${icon}.png`;
-    img.alt = "";
+        const img = document.createElement("img");
+        img.src = `${newURL.href}/png/${icon}.png`;
+        img.alt = "";
 
-    picture.appendChild(sourceSVG);
-    picture.appendChild(img);
+        picture.appendChild(sourceSVG);
+        picture.appendChild(img);
 
-    software.appendChild(picture);
+        software.appendChild(picture);
+    }
 });
 // }
 
