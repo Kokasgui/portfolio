@@ -442,20 +442,20 @@ function ToggleIntroScreen() {
                 sawIntro = true;
             }, 100);
         }
-    } else if (intro.getAnimations("aria-hidden") === "true") {
-        // localStorage.removeItem("sawIntro");
     }
 }
 
 // ================================================= EFEITOS SONOROS ================================================
 function PlaySound(sound) {
-    if (!sound) console.error("Som a tocar não foi definido!");
+    if (!sound) console.error("Som a reproduzir não foi definido!");
     // console.log(sound);
 
     const soundEffect = document.querySelector(`#${sound}`);
     // console.log(soundEffect);
 
     // console.log(accessOptions.general.soundEffects);
+
+    // Se a primeira interação no site for utilizar os sticks analógicos, não vai reproduzir nenhum som porque os sticks não contam como uma interação do utilizador
     if (accessOptions.general.soundEffects === true) {
         soundEffect.currentTime = 0;
         soundEffect.play();
@@ -722,6 +722,11 @@ function GetGamepadInfo(gamepad, onConnection) {
                     case "2007": // No Firefox os analógicos não funcionam e no Safari os analógicos são mapeados para o d-pad
                         if (onConnection) console.warn("Switch Right Joy-Con");
                         gamepadConnected = "NintendoStandard";
+                        UpdateActionBar(gamepadConnected);
+                        break;
+                    case "2009": // O Firefox assume que muitos botões estão a ser pressionados
+                        if (onConnection) console.warn("Switch Pro Controller");
+                        gamepadConnected = "NintendoSwitch";
                         UpdateActionBar(gamepadConnected);
                         break;
                 }
@@ -1006,26 +1011,20 @@ function UpdateActionBar(gamepadType) {
         const actionType = actionArray[i].getAttribute("action");
         const span = actionArray[i].querySelector("span");
 
-        // Se já existir um ícone da tecla/botão, remove-o primeiro
-        if (span.querySelector("img")) {
-            const img = span.querySelector("img");
-            img.remove();
+        let img = span.querySelector("img");
+        // Se ainda não existir um ícone da tecla/botão, cria-o
+        if (!img) {
+            img = document.createElement("img");
+            span.appendChild(img);
         }
-
-        // debugger;
-
-        // console.log(gamepadType);
-
-        const newImg = document.createElement("img");
 
         if (!gamepadType) {
-            newImg.src = `${newURL.href}keyboard/${imgName}.png`;
-            newImg.alt = "";
+            img.src = `${newURL.href}keyboard/${imgName}.png`;
+            img.alt = "";
         } else {
-            newImg.src = `${newURL.href}${gamepadType}/${imgName}.png`;
-            newImg.alt = "";
+            img.src = `${newURL.href}${gamepadType}/${imgName}.png`;
+            img.alt = "";
         }
-        span.appendChild(newImg);
 
         // console.log(actionType);
 
@@ -1151,7 +1150,9 @@ document.addEventListener("keydown", (e) => {
                                 document.querySelector("#exit-popup").getAttribute("aria-hidden") === "true"
                             ) {
                                 main.querySelector("section").focus();
-                                PlaySound("mover");
+                                if (!intro || (intro && intro.opacity === 0)) {
+                                    PlaySound("mover");
+                                }
                             } else if (
                                 navButton.getAttribute("aria-expanded") === "false" &&
                                 document.querySelector("#exit-popup").getAttribute("aria-hidden") === "false"
@@ -2355,7 +2356,9 @@ function MainLoop() {
                                     document.querySelector("#exit-popup").getAttribute("aria-hidden") === "true"
                                 ) {
                                     main.querySelector("section").focus();
-                                    PlaySound("mover");
+                                    if (!intro || (intro && intro.opacity === 0)) {
+                                        PlaySound("mover");
+                                    }
                                 } else if (
                                     navButton.getAttribute("aria-expanded") === "false" &&
                                     document.querySelector("#exit-popup").getAttribute("aria-hidden") === "false"
@@ -2372,8 +2375,7 @@ function MainLoop() {
                                     document.querySelector("#options input").focus();
                                     PlaySound("mover");
                                 }
-                                UpdateActionBar(gamepadObject);
-                                // GetGamepadInfo(gamepadObject);
+                                GetGamepadInfo(gamepadObject);
                                 continue; // isto impede de mudar o foco para outro sítio
                             }
                         }
@@ -2454,34 +2456,39 @@ function MainLoop() {
                     (currentAxes[a] <= -0.7 && previousAxes[navigatorIndex][a] > -0.7) ||
                     (currentAxes[a] >= 0.7 && previousAxes[navigatorIndex][a] < 0.7)
                 ) {
-                    if (focusedElement === document.body) {
-                        if (
-                            navButton.getAttribute("aria-expanded") === "false" &&
-                            document.querySelector("#exit-popup").getAttribute("aria-hidden") === "true"
-                        ) {
-                            main.querySelector("section").focus();
-                            PlaySound("mover");
-                        } else if (
-                            navButton.getAttribute("aria-expanded") === "false" &&
-                            document.querySelector("#exit-popup").getAttribute("aria-hidden") === "false"
-                        ) {
-                            document.querySelector("#exit-popup #cancel").focus();
-                            PlaySound("mover");
-                        } else if (
-                            navButton.getAttribute("aria-expanded") === "true" &&
-                            document.querySelector("#options").getAttribute("aria-hidden") === "true"
-                        ) {
-                            document.querySelector("#nav-list a").focus();
-                            PlaySound("mover");
-                        } else if (document.querySelector("#options").getAttribute("aria-hidden") === "false") {
-                            document.querySelector("#options input").focus();
-                            PlaySound("mover");
+                    if (!intro || (intro && intro.getAttribute("aria-hidden") === "true")) {
+                        if (focusedElement === document.body) {
+                            if (
+                                navButton.getAttribute("aria-expanded") === "false" &&
+                                document.querySelector("#exit-popup").getAttribute("aria-hidden") === "true"
+                            ) {
+                                main.querySelector("section").focus();
+                                if (!intro || (intro && intro.opacity === 0)) {
+                                    PlaySound("mover");
+                                }
+                            } else if (
+                                navButton.getAttribute("aria-expanded") === "false" &&
+                                document.querySelector("#exit-popup").getAttribute("aria-hidden") === "false"
+                            ) {
+                                document.querySelector("#exit-popup #cancel").focus();
+                                PlaySound("mover");
+                            } else if (
+                                navButton.getAttribute("aria-expanded") === "true" &&
+                                document.querySelector("#options").getAttribute("aria-hidden") === "true"
+                            ) {
+                                document.querySelector("#nav-list a").focus();
+                                PlaySound("mover");
+                            } else if (document.querySelector("#options").getAttribute("aria-hidden") === "false") {
+                                document.querySelector("#options input").focus();
+                                PlaySound("mover");
+                            }
+                            GetGamepadInfo(gamepadObject);
+                            continue; // isto impede de mudar o foco para outro sítio
                         }
-                        continue;
-                    }
 
-                    if (axisMoveActions[a]) axisMoveActions[a]();
-                    GetGamepadInfo(gamepadObject);
+                        if (axisMoveActions[a]) axisMoveActions[a]();
+                        GetGamepadInfo(gamepadObject);
+                    }
                 }
 
                 // Ação RELEASE
@@ -2509,9 +2516,11 @@ function MainLoop() {
                         // As ações de hold só iniciam segundo um intervalo estipulado anteriormente (padrão é 250 ms)
                         if (currentFrame - gamepadHoldActionStartTime[navigatorIndex] >= accessOptions.controller.holdInterval) {
                             // console.log("NOW");
-                            if (axisMoveActions[a]) axisMoveActions[a]();
-                            GetGamepadInfo(gamepadObject);
-                            gamepadHoldActionStartTime[navigatorIndex] = 0;
+                            if (!intro || (intro && intro.getAttribute("aria-hidden") === "true")) {
+                                if (axisMoveActions[a]) axisMoveActions[a]();
+                                GetGamepadInfo(gamepadObject);
+                                gamepadHoldActionStartTime[navigatorIndex] = 0;
+                            }
                         }
                     }
                 }
