@@ -161,6 +161,7 @@ class o extends HTMLElement {
         e.autoplay &&
             setTimeout(() => {
                 e.play();
+                console.info(`A usar vídeo cujo endereço é ${e.currentSrc}`);
             }, 0);
         const t = () => {
             var t;
