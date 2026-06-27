@@ -240,7 +240,7 @@ document.addEventListener("mouse-focus", (e) => {
 
 const galleryButtons = main.querySelector("#gallery-buttons");
 
-// Isto faz com que
+// Isto faz com que, ao clicar no website, os botões da galeria sejam desfocados
 document.addEventListener("mousedown", () => {
     if (galleryButtons) galleryButtons.dispatchEvent(new Event("remove-focus"));
 
@@ -254,6 +254,11 @@ if (galleryButtons) {
         }
     });
 }
+
+// Ao clicar no botão de voltar para o topo com o rato, mostra os botões do teclado
+document.querySelector("#go-to-top > a").addEventListener("click", () => {
+    UpdateActionBar();
+});
 
 document.querySelectorAll("input").forEach((input) => {
     const [group, key] = input.name.split(".");
@@ -864,9 +869,6 @@ function UpdateActionBar(gamepadType) {
         }
     }
 
-    const jsURL = import.meta.url;
-    // console.log(jsURL);
-    const newURL = new URL("../action-icons/", jsURL);
     // console.log(newURL.href);
 
     const actionArray = Array.from(mainActions.children);
@@ -1010,6 +1012,10 @@ function UpdateActionBar(gamepadType) {
 
         const actionType = actionArray[i].getAttribute("action");
         const span = actionArray[i].querySelector("span");
+
+        const jsURL = import.meta.url;
+        // console.log(jsURL);
+        const newURL = new URL("../action-icons/", jsURL);
 
         let img = span.querySelector("img");
         // Se ainda não existir um ícone da tecla/botão, cria-o
@@ -1351,6 +1357,13 @@ function ActionsMegaFunction(action, device) {
             else if (focusedElement === document.querySelector("#options-icon button")) {
                 ToggleAccessOptions(device);
             }
+            // Se estiver a focar o botão de voltar para o topo
+            else if (focusedElement === footer.querySelector("#go-to-top > a")) {
+                main.querySelector("section").focus();
+                PlaySound("selecionar");
+                UpdateActionBar(device);
+                // return;
+            }
             // Outras opções
             else {
                 const pathname = location.pathname;
@@ -1548,24 +1561,6 @@ function ToggleNavMenu(input) {
         menuList.querySelectorAll("[tabindex='0']").forEach((link) => {
             link.setAttribute("tabindex", "-1");
         });
-
-        // Retorna o foco para o último item do main (ou inicia o foco)
-        if (lastFocusedElement === document.body && input !== "mouse") main.querySelector("section").focus();
-        else {
-            // debugger;
-            document.activeElement.blur();
-
-            // console.log(document.activeElement, lastFocusedElement);
-
-            if (!currentKeys.includes("Tab")) {
-                // Se o input vier to teclado ou do comando
-                if (input !== "mouse") {
-                    lastFocusedElement.focus();
-                } else {
-                    lastFocusedElement === document.body;
-                }
-            }
-        }
     }
 
     PlaySound("popups");
@@ -1869,15 +1864,6 @@ function MoveSelection(direction, columnOrRow) {
                         PlaySound("moverSeccao-checkbox");
                         return;
                     }
-
-                    /* // Quando acaba de navegar pelo site, o foco passa para a secção que engloba o elemento que estava em foco
-                    let element = lastFocusedElement;
-                    while (element.tagName !== "SECTION") {
-                        element = element.parentElement;
-                    }
-                    // console.log(element);
-                    element.focus();
-                    return;*/
                 }
                 // E este é o comportamento dentro do main
                 else {
@@ -2117,22 +2103,6 @@ function MoveSelection(direction, columnOrRow) {
             ) {
                 currentNode = parent;
             } else return;
-        }
-    } else {
-        // console.log(lastFocusedElement);
-
-        if (navButton.getAttribute("aria-expanded") === "false") {
-            // Caso o website ainda não tenha tido foco, passa o foco para a primeira secção do website
-            if (lastFocusedElement === document.body) {
-                main.querySelector("section").focus();
-                PlaySound("mover");
-                return;
-            } else lastFocusedElement.focus();
-            // por exemplo, ao fechar o menu, perde-se o foco, então isto faz com que o foco volte para o elemento em que se estava
-        } else {
-            mainNav.querySelector("li > a").focus();
-            PlaySound("mover");
-            return;
         }
     }
 }
@@ -2534,8 +2504,9 @@ function MainLoop() {
         });
     } else {
         // Apenas basta adicionar quando uma tecla é pressionada
-        if (currentKeys.length > 0) holdTime += deltaTime;
-        else {
+        if (currentKeys.length > 0) {
+            holdTime += deltaTime;
+        } else {
             holdTime = 0;
             holdActionStartTime = 0;
         }
@@ -2575,29 +2546,8 @@ function MainLoop() {
     const slidesArray = Array.from(main.querySelectorAll("#project-gallery figure"));
     const currentSlide = main.querySelector("figure[aria-current='true']");
 
-    // Se o elemento em foco não for algo do menu ou o body, regista esse elemento para se poder regressar ao foco
-    if (focusedElement !== document.body && (main.contains(focusedElement) || footer.contains(focusedElement))) {
-        lastFocusedElement = focusedElement;
-    }
-
-    // Caso vá para o topo a partir do botão do rodapé, o foco passa automaticamente para a primeira secção
-    if (focusedElement === document.body && lastFocusedElement === document.querySelector("#go-to-top a")) {
-        // Se o input vier do teclado ou do comando de jogo, foca com focus visible
-        if (
-            currentKeys.includes("Enter") ||
-            currentKeys.includes(" ") ||
-            currentKeys.includes("Spacebar") ||
-            (gamepad && gamepad.some((gamepadObject) => gamepadObject.buttons[0].value > 0))
-        ) {
-            main.querySelector("section").focus();
-        }
-        // Se não, foca sem realce visual
-        else {
-            main.querySelector("section").focus();
-        }
-    }
-
     // -------------------------------- CÁLCULO DO DELTA TIME E INÍCIO DA PRÓXIMA FRAME ---------------------------------
+    lastFocusedElement = focusedElement;
 
     // console.log(focusedElement, lastFocusedElement);
 
