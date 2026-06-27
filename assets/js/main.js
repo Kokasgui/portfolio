@@ -869,8 +869,6 @@ function UpdateActionBar(gamepadType) {
         }
     }
 
-    // console.log(newURL.href);
-
     const actionArray = Array.from(mainActions.children);
 
     for (let i = 0; i < mainActions.childElementCount; i++) {
@@ -1016,6 +1014,7 @@ function UpdateActionBar(gamepadType) {
         const jsURL = import.meta.url;
         // console.log(jsURL);
         const newURL = new URL("../action-icons/", jsURL);
+        // console.log(newURL.href);
 
         let img = span.querySelector("img");
         // Se ainda não existir um ícone da tecla/botão, cria-o
