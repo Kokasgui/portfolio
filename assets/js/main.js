@@ -2159,10 +2159,9 @@ function MainLoop() {
     // console.log(galleryHoverTime);
 
     if (gamepad.length > 0) {
-        gamepad.forEach((gamepadObject) => {
+        gamepad.forEach((gamepadObject, i) => {
             // console.log(gamepadObject);
             // console.log(navigator.getGamepads());
-            const navigatorIndex = navigator.getGamepads().findIndex((g) => g && g.id === gamepadObject.id);
 
             // if (gamepad.every((g) => g.mapping === "standard")) {
             // Isto trata de scrollar na página
@@ -2179,22 +2178,22 @@ function MainLoop() {
             if (currentKeys.length > 0 || !currentButtons.every((b) => b === 0) || currentAxes.some((a) => Math.abs(a) >= 0.7)) {
                 // console.log(currentButtons);
 
-                gamepadHoldTime[navigatorIndex] += deltaTime;
-                // gamepadHoldActionStartTime[navigatorIndex] += deltaTime;
+                gamepadHoldTime[i] += deltaTime;
+                // gamepadHoldActionStartTime[i] += deltaTime;
             } else {
-                gamepadHoldTime[navigatorIndex] = 0;
-                gamepadHoldActionStartTime[navigatorIndex] = 0;
+                gamepadHoldTime[i] = 0;
+                gamepadHoldActionStartTime[i] = 0;
             }
 
-            // console.log(gamepadHoldTime[navigatorIndex], gamepadHoldActionStartTime[navigatorIndex]);
+            // console.log(gamepadHoldTime[i], gamepadHoldActionStartTime[i]);
 
             // No momento em que o comando é detetado, assume que no frame anterior nenhum botão foi pressionado e que nenhum eixo foi movido
-            if (previousButtons[navigatorIndex].length === 0) {
-                previousButtons[navigatorIndex] = currentButtons.map((b) => 0);
+            if (previousButtons[i].length === 0) {
+                previousButtons[i] = currentButtons.map((b) => 0);
                 // console.log("previousButtons", previousButtons);
             }
-            if (previousAxes[navigatorIndex].length === 0) {
-                previousAxes[navigatorIndex] = currentAxes.map((a) => 0);
+            if (previousAxes[i].length === 0) {
+                previousAxes[i] = currentAxes.map((a) => 0);
                 // console.log("previousButtons", previousButtons);
             }
 
@@ -2296,7 +2295,7 @@ function MainLoop() {
             // Avalia o estado atual e anterior dos botões e realiza as ações respetivas
             for (let b = 0; b < currentButtons.length; b++) {
                 // Ação PRESS
-                if (currentButtons[b] > 0 && previousButtons[navigatorIndex][b] === 0) {
+                if (currentButtons[b] > 0 && previousButtons[i][b] === 0) {
                     // debugger;
 
                     // Inicia o foco automaticamente caso o utilizador não queira abrir imediatamente o menu
@@ -2355,33 +2354,33 @@ function MainLoop() {
                     GetGamepadInfo(gamepadObject);
                 }
                 // Ação RELEASE
-                if (currentButtons[b] === 0 && previousButtons[navigatorIndex][b] > 0) {
+                if (currentButtons[b] === 0 && previousButtons[i][b] > 0) {
                     if (buttonReleaseActions[b]) buttonReleaseActions[b]();
                 }
                 // Ação HOLD
-                if (currentButtons[b] > 0 && previousButtons[navigatorIndex][b] > 0) {
+                if (currentButtons[b] > 0 && previousButtons[i][b] > 0) {
                     // debugger;
 
                     // Se ainda não existir, regista o tempo em que se começou a pressionar o botão
-                    if (gamepadHoldActionStartTime[navigatorIndex] === 0) {
-                        gamepadHoldActionStartTime[navigatorIndex] = performance.now();
-                        // console.log(gamepadHoldActionStartTime[navigatorIndex]);
+                    if (gamepadHoldActionStartTime[i] === 0) {
+                        gamepadHoldActionStartTime[i] = performance.now();
+                        // console.log(gamepadHoldActionStartTime[i]);
                     }
                     // Se o botão estiver a ser pressionado por mais de 750 ms, inicia as ações de hold
-                    if (gamepadHoldTime[navigatorIndex] >= accessOptions.controller.holdDelay) {
+                    if (gamepadHoldTime[i] >= accessOptions.controller.holdDelay) {
                         // debugger;
 
                         // As ações de hold só iniciam segundo um intervalo estipulado anteriormente (padrão é 250 ms)
-                        if (currentFrame - gamepadHoldActionStartTime[navigatorIndex] >= accessOptions.controller.holdInterval) {
+                        if (currentFrame - gamepadHoldActionStartTime[i] >= accessOptions.controller.holdInterval) {
                             // console.log("NOW");
                             if (buttonPressActions[b]) buttonPressActions[b]();
                             GetGamepadInfo(gamepadObject);
-                            gamepadHoldActionStartTime[navigatorIndex] = 0;
+                            gamepadHoldActionStartTime[i] = 0;
                         }
                     }
 
-                    // console.log(navigatorIndex);
-                    // console.log(gamepadHoldTime[navigatorIndex], gamepadHoldActionStartTime[navigatorIndex]);
+                    // console.log(i);
+                    // console.log(gamepadHoldTime[i], gamepadHoldActionStartTime[i]);
                 }
             }
 
@@ -2422,10 +2421,7 @@ function MainLoop() {
                 const axisReleaseActions = {};
 
                 // Ação PRESS
-                if (
-                    (currentAxes[a] <= -0.7 && previousAxes[navigatorIndex][a] > -0.7) ||
-                    (currentAxes[a] >= 0.7 && previousAxes[navigatorIndex][a] < 0.7)
-                ) {
+                if ((currentAxes[a] <= -0.7 && previousAxes[i][a] > -0.7) || (currentAxes[a] >= 0.7 && previousAxes[i][a] < 0.7)) {
                     if (!intro || (intro && intro.getAttribute("aria-hidden") === "true")) {
                         if (focusedElement === document.body) {
                             if (
@@ -2462,42 +2458,36 @@ function MainLoop() {
                 }
 
                 // Ação RELEASE
-                if (
-                    (currentAxes[a] > -0.7 && previousAxes[navigatorIndex][a] <= -0.7) ||
-                    (currentAxes[a] < 0.7 && previousAxes[navigatorIndex][a] >= 0.7)
-                ) {
+                if ((currentAxes[a] > -0.7 && previousAxes[i][a] <= -0.7) || (currentAxes[a] < 0.7 && previousAxes[i][a] >= 0.7)) {
                     if (axisReleaseActions[a]) axisReleaseActions[a]();
                 }
 
                 // Ação HOLD
-                if (
-                    (currentAxes[a] <= -0.7 && previousAxes[navigatorIndex][a] <= -0.7) ||
-                    (currentAxes[a] >= 0.7 && previousAxes[navigatorIndex][a] >= 0.7)
-                ) {
-                    if (gamepadHoldActionStartTime[navigatorIndex] === 0) {
-                        gamepadHoldActionStartTime[navigatorIndex] = performance.now();
-                        // console.log(gamepadHoldActionStartTime[navigatorIndex]);
+                if ((currentAxes[a] <= -0.7 && previousAxes[i][a] <= -0.7) || (currentAxes[a] >= 0.7 && previousAxes[i][a] >= 0.7)) {
+                    if (gamepadHoldActionStartTime[i] === 0) {
+                        gamepadHoldActionStartTime[i] = performance.now();
+                        // console.log(gamepadHoldActionStartTime[i]);
                         // console.log(gamepadHoldTime);
                     }
                     // Se o botão estiver a ser pressionado por mais de 750 ms, inicia as ações de hold
-                    if (gamepadHoldTime[navigatorIndex] >= accessOptions.controller.holdDelay) {
+                    if (gamepadHoldTime[i] >= accessOptions.controller.holdDelay) {
                         // debugger;
 
                         // As ações de hold só iniciam segundo um intervalo estipulado anteriormente (padrão é 250 ms)
-                        if (currentFrame - gamepadHoldActionStartTime[navigatorIndex] >= accessOptions.controller.holdInterval) {
+                        if (currentFrame - gamepadHoldActionStartTime[i] >= accessOptions.controller.holdInterval) {
                             // console.log("NOW");
                             if (!intro || (intro && intro.getAttribute("aria-hidden") === "true")) {
                                 if (axisMoveActions[a]) axisMoveActions[a]();
                                 GetGamepadInfo(gamepadObject);
-                                gamepadHoldActionStartTime[navigatorIndex] = 0;
+                                gamepadHoldActionStartTime[i] = 0;
                             }
                         }
                     }
                 }
             }
 
-            previousButtons[navigatorIndex] = currentButtons;
-            previousAxes[navigatorIndex] = currentAxes;
+            previousButtons[i] = currentButtons;
+            previousAxes[i] = currentAxes;
 
             // console.log(currentAxes, currentButtons);
             // debugger;
