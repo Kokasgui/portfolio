@@ -1359,6 +1359,7 @@ function ActionsMegaFunction(action, device) {
             // Se estiver a focar o botão de voltar para o topo
             else if (focusedElement === footer.querySelector("#go-to-top > a")) {
                 main.querySelector("section").focus();
+                footer.querySelector("#go-to-top > a").animate(buttonWiggleAnimation, { duration: 150, iterations: 1 });
                 PlaySound("selecionar");
                 UpdateActionBar(device);
                 // return;
