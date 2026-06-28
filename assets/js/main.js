@@ -2346,11 +2346,7 @@ function MainLoop() {
                                     document.querySelector("#options input").focus();
                                     PlaySound("mover");
                                 }
-                                if (i === 0) {
-                                    UpdateActionBar("Xbox");
-                                } else {
-                                    GetGamepadInfo(gamepadObject);
-                                }
+                                GetGamepadInfo(gamepadObject);
 
                                 continue; // isto impede de mudar o foco para outro sítio
                             }
@@ -2358,11 +2354,7 @@ function MainLoop() {
                     }
 
                     if (buttonPressActions[b]) buttonPressActions[b]();
-                    if (i === 0) {
-                        UpdateActionBar("Xbox");
-                    } else {
-                        GetGamepadInfo(gamepadObject);
-                    }
+                    GetGamepadInfo(gamepadObject);
                 }
                 // Ação RELEASE
                 if (currentButtons[b] === 0 && previousButtons[i][b] > 0) {
@@ -2385,11 +2377,7 @@ function MainLoop() {
                         if (currentFrame - gamepadHoldActionStartTime[i] >= accessOptions.controller.holdInterval) {
                             // console.log("NOW");
                             if (buttonPressActions[b]) buttonPressActions[b]();
-                            if (i === 0) {
-                                UpdateActionBar("Xbox");
-                            } else {
-                                GetGamepadInfo(gamepadObject);
-                            }
+                            GetGamepadInfo(gamepadObject);
 
                             gamepadHoldActionStartTime[i] = 0;
                         }
@@ -2413,38 +2401,22 @@ function MainLoop() {
                         // Stick analógico esquerdo para esquerda/direita
                         if (currentAxes[0] <= -0.7) {
                             MoveSelection(-1, "row");
-                            if (i === 0) {
-                                UpdateActionBar("Xbox");
-                            } else {
-                                GetGamepadInfo(gamepadObject);
-                            }
+                            GetGamepadInfo(gamepadObject);
                         }
                         if (currentAxes[0] >= 0.7) {
                             MoveSelection(1, "row");
-                            if (i === 0) {
-                                UpdateActionBar("Xbox");
-                            } else {
-                                GetGamepadInfo(gamepadObject);
-                            }
+                            GetGamepadInfo(gamepadObject);
                         }
                     },
                     1: () => {
                         // Stick analógico esquerdo para cima/baixo
                         if (currentAxes[1] <= -0.7) {
                             MoveSelection(-1, "column");
-                            if (i === 0) {
-                                UpdateActionBar("Xbox");
-                            } else {
-                                GetGamepadInfo(gamepadObject);
-                            }
+                            GetGamepadInfo(gamepadObject);
                         }
                         if (currentAxes[1] >= 0.7) {
                             MoveSelection(1, "column");
-                            if (i === 0) {
-                                UpdateActionBar("Xbox");
-                            } else {
-                                GetGamepadInfo(gamepadObject);
-                            }
+                            GetGamepadInfo(gamepadObject);
                         }
                     },
                 };
@@ -2480,21 +2452,13 @@ function MainLoop() {
                                 document.querySelector("#options input").focus();
                                 PlaySound("mover");
                             }
-                            if (i === 0) {
-                                UpdateActionBar("Xbox");
-                            } else {
-                                GetGamepadInfo(gamepadObject);
-                            }
+                            GetGamepadInfo(gamepadObject);
 
                             continue; // isto impede de mudar o foco para outro sítio
                         }
 
                         if (axisMoveActions[a]) axisMoveActions[a]();
-                        if (i === 0) {
-                            UpdateActionBar("Xbox");
-                        } else {
-                            GetGamepadInfo(gamepadObject);
-                        }
+                        GetGamepadInfo(gamepadObject);
                     }
                 }
 
@@ -2519,11 +2483,7 @@ function MainLoop() {
                             // console.log("NOW");
                             if (!intro || (intro && intro.getAttribute("aria-hidden") === "true")) {
                                 if (axisMoveActions[a]) axisMoveActions[a]();
-                                if (i === 0) {
-                                    UpdateActionBar("Xbox");
-                                } else {
-                                    GetGamepadInfo(gamepadObject);
-                                }
+                                GetGamepadInfo(gamepadObject);
                                 gamepadHoldActionStartTime[i] = 0;
                             }
                         }
