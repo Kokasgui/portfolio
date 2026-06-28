@@ -1572,6 +1572,8 @@ function ToggleNavMenu(input) {
         menuList.querySelectorAll("[tabindex='0']").forEach((link) => {
             link.setAttribute("tabindex", "-1");
         });
+
+        main.querySelector("section").focus();
     }
 
     PlaySound("popups");
