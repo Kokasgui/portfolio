@@ -1573,7 +1573,7 @@ function ToggleNavMenu(input) {
             link.setAttribute("tabindex", "-1");
         });
 
-        main.querySelector("section").focus();
+        if (input !== "mouse") main.querySelector("section").focus();
     }
 
     PlaySound("popups");
