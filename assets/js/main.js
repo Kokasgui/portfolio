@@ -50,11 +50,16 @@ window.addEventListener("load", (e) => {
         // focusable.dispatchEvent(new Event("mousedown"));
     });
 
+    loading.setAttribute("aria-hidden", "true");
+
+    if (document.body.hasAttribute("style")) {
+        document.body.removeAttribute("style");
+    }
+
     sawIntro = localStorage.getItem("sawIntro");
     if (intro) {
         if (sawIntro) {
             sawIntro = true;
-            // localStorage.removeItem("sawIntro"); // REMOVER ESTA MERDA QUANDO TERMINAR
             console.warn("Já viu a introdução");
         } else {
             console.warn("Ainda não viu a introdução");
@@ -70,7 +75,7 @@ window.addEventListener("load", (e) => {
         }
     }
 
-    loading.setAttribute("aria-hidden", "true");
+    // document.body.setAttribute("style", "overflow: hidden;");
 });
 
 if (intro) {
@@ -432,7 +437,9 @@ function ToggleIntroScreen() {
         intro.setAttribute("aria-hidden", "true");
         localStorage.setItem("sawIntro", "yes");
 
-        document.body.removeAttribute("style");
+        if (document.body.hasAttribute("style")) {
+            document.body.removeAttribute("style");
+        }
 
         header.removeAttribute("aria-hidden");
         main.removeAttribute("aria-hidden");

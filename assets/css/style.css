@@ -310,6 +310,10 @@ section ul h4 {
     margin-bottom: 0.15em;
 }
 
+section:first-of-type > p {
+    width: 75%;
+}
+
 /* ------------------------------------------ FORMULÁRIO ----------------------------------------- */
 form {
     display: flex;
@@ -2414,6 +2418,9 @@ footer #go-to-top a::before {
     }
     section:first-of-type {
         scroll-margin-top: 0;
+    }
+    section:first-of-type > p {
+        width: 100%;
     }
 
     section > div {

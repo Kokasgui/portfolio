@@ -109,20 +109,6 @@ class o extends HTMLElement {
                     this.#n = n(this.#t);
                 } catch (e) {
                     console.warn("<stacked-alpha-video> Couldn't create GL context");
-
-                    // // --------------------------------------------------- CASO WEBGL NÃO SEJA POSSÍVEL ---------------------------------------------------
-                    // const avatar = document.querySelector("#avatar");
-                    // const canvas = avatar.querySelector("canvas");
-
-                    // if (!canvas) {
-                    //     const img = document.createElement("img");
-
-                    //     img.src = "./assets/images/avatar.png";
-                    //     img.alt = "Avatar de Guilherme Costa";
-
-                    //     avatar.appendChild(img);
-                    //     avatar.querySelector("stacked-alpha-video").remove();
-                    // }
                 }
                 if (!this.#n) return;
                 i(this.#n, this.premultipliedAlpha);
