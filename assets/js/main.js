@@ -2531,12 +2531,6 @@ function MainLoop() {
                 }
             }
 
-            if (currentButtons.every((b) => b === 0) && currentKeys.length === 0 && lastFocusedElement === focusedElement) {
-                inactiveTime += deltaTime;
-            } else if (!currentButtons.every((b) => b === 0) || currentKeys.length > 0 || lastFocusedElement !== focusedElement) {
-                inactiveTime = 0;
-            }
-
             previousButtons[i] = currentButtons;
             previousAxes[i] = currentAxes;
 
