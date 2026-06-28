@@ -2178,7 +2178,11 @@ function MainLoop() {
             // Isto trata de scrollar na página
             if (Math.abs(gamepadObject.axes[3]) >= 0.07) {
                 window.scrollBy({ left: 0, top: gamepadObject.axes[3] * 2 * deltaTime, behavior: "instant" });
-                GetGamepadInfo(gamepadObject);
+                if (i === 0) {
+                    UpdateActionBar("Xbox");
+                } else {
+                    GetGamepadInfo(gamepadObject);
+                }
 
                 inactiveTime = 0;
             }
@@ -2357,14 +2361,23 @@ function MainLoop() {
                                     document.querySelector("#options input").focus();
                                     PlaySound("mover");
                                 }
-                                GetGamepadInfo(gamepadObject);
+                                if (i === 0) {
+                                    UpdateActionBar("Xbox");
+                                } else {
+                                    GetGamepadInfo(gamepadObject);
+                                }
+
                                 continue; // isto impede de mudar o foco para outro sítio
                             }
                         }
                     }
 
                     if (buttonPressActions[b]) buttonPressActions[b]();
-                    GetGamepadInfo(gamepadObject);
+                    if (i === 0) {
+                        UpdateActionBar("Xbox");
+                    } else {
+                        GetGamepadInfo(gamepadObject);
+                    }
                 }
                 // Ação RELEASE
                 if (currentButtons[b] === 0 && previousButtons[i][b] > 0) {
@@ -2387,7 +2400,12 @@ function MainLoop() {
                         if (currentFrame - gamepadHoldActionStartTime[i] >= accessOptions.controller.holdInterval) {
                             // console.log("NOW");
                             if (buttonPressActions[b]) buttonPressActions[b]();
-                            GetGamepadInfo(gamepadObject);
+                            if (i === 0) {
+                                UpdateActionBar("Xbox");
+                            } else {
+                                GetGamepadInfo(gamepadObject);
+                            }
+
                             gamepadHoldActionStartTime[i] = 0;
                         }
                     }
@@ -2410,22 +2428,38 @@ function MainLoop() {
                         // Stick analógico esquerdo para esquerda/direita
                         if (currentAxes[0] <= -0.7) {
                             MoveSelection(-1, "row");
-                            GetGamepadInfo(gamepadObject);
+                            if (i === 0) {
+                                UpdateActionBar("Xbox");
+                            } else {
+                                GetGamepadInfo(gamepadObject);
+                            }
                         }
                         if (currentAxes[0] >= 0.7) {
                             MoveSelection(1, "row");
-                            GetGamepadInfo(gamepadObject);
+                            if (i === 0) {
+                                UpdateActionBar("Xbox");
+                            } else {
+                                GetGamepadInfo(gamepadObject);
+                            }
                         }
                     },
                     1: () => {
                         // Stick analógico esquerdo para cima/baixo
                         if (currentAxes[1] <= -0.7) {
                             MoveSelection(-1, "column");
-                            GetGamepadInfo(gamepadObject);
+                            if (i === 0) {
+                                UpdateActionBar("Xbox");
+                            } else {
+                                GetGamepadInfo(gamepadObject);
+                            }
                         }
                         if (currentAxes[1] >= 0.7) {
                             MoveSelection(1, "column");
-                            GetGamepadInfo(gamepadObject);
+                            if (i === 0) {
+                                UpdateActionBar("Xbox");
+                            } else {
+                                GetGamepadInfo(gamepadObject);
+                            }
                         }
                     },
                 };
@@ -2461,12 +2495,21 @@ function MainLoop() {
                                 document.querySelector("#options input").focus();
                                 PlaySound("mover");
                             }
-                            GetGamepadInfo(gamepadObject);
+                            if (i === 0) {
+                                UpdateActionBar("Xbox");
+                            } else {
+                                GetGamepadInfo(gamepadObject);
+                            }
+
                             continue; // isto impede de mudar o foco para outro sítio
                         }
 
                         if (axisMoveActions[a]) axisMoveActions[a]();
-                        GetGamepadInfo(gamepadObject);
+                        if (i === 0) {
+                            UpdateActionBar("Xbox");
+                        } else {
+                            GetGamepadInfo(gamepadObject);
+                        }
                     }
                 }
 
@@ -2491,7 +2534,11 @@ function MainLoop() {
                             // console.log("NOW");
                             if (!intro || (intro && intro.getAttribute("aria-hidden") === "true")) {
                                 if (axisMoveActions[a]) axisMoveActions[a]();
-                                GetGamepadInfo(gamepadObject);
+                                if (i === 0) {
+                                    UpdateActionBar("Xbox");
+                                } else {
+                                    GetGamepadInfo(gamepadObject);
+                                }
                                 gamepadHoldActionStartTime[i] = 0;
                             }
                         }
