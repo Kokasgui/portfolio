@@ -1,4 +1,5 @@
 let deltaTime = 0;
+let inactiveTime = 0;
 
 let writingMode = true;
 
@@ -250,6 +251,12 @@ document.addEventListener("mousedown", () => {
     if (galleryButtons) galleryButtons.dispatchEvent(new Event("remove-focus"));
 
     document.dispatchEvent(new Event("mouse-focus"));
+
+    inactiveTime = 0;
+});
+
+document.addEventListener("mousemove", () => {
+    inactiveTime = 0;
 });
 
 if (galleryButtons) {
@@ -608,6 +615,8 @@ window.addEventListener("gamepadconnected", (e) => {
     // if (e.gamepad.index === gamepadIndex) {
     GetGamepadInfo(e.gamepad, true);
 
+    inactiveTime = 0;
+
     // if (window.getComputedStyle(actionbar).display === "none") {
     actionbar.parentElement.classList.add("show");
     // }
@@ -622,6 +631,8 @@ window.addEventListener("gamepaddisconnected", (e) => {
     // if (e.gamepad.index === gamepadIndex) {
     // gamepadConnected = null;
     UpdateActionBar(null);
+
+    inactiveTime = 0;
 
     // if (actionbar.getAttribute("style") === "display: flex;") {
     if (actionbar.parentElement.classList.contains("show")) {
@@ -2177,6 +2188,8 @@ function MainLoop() {
             if (Math.abs(gamepadObject.axes[3]) >= 0.07) {
                 window.scrollBy({ left: 0, top: gamepadObject.axes[3] * 2 * deltaTime, behavior: "instant" });
                 GetGamepadInfo(gamepadObject);
+
+                inactiveTime = 0;
             }
 
             // Isto apenas faz arrays dos valores de todos os botões e dos eixos
@@ -2461,6 +2474,8 @@ function MainLoop() {
                             }
                             GetGamepadInfo(gamepadObject);
 
+                            inactiveTime = 0;
+
                             continue; // isto impede de mudar o foco para outro sítio
                         }
 
@@ -2498,6 +2513,12 @@ function MainLoop() {
                 }
             }
 
+            if (currentButtons.every((b) => b === 0) && currentKeys.length === 0 && lastFocusedElement === focusedElement) {
+                inactiveTime += deltaTime;
+            } else if (!currentButtons.every((b) => b === 0) || currentKeys.length > 0 || lastFocusedElement !== focusedElement) {
+                inactiveTime = 0;
+            }
+
             previousButtons[i] = currentButtons;
             previousAxes[i] = currentAxes;
 
@@ -2508,9 +2529,15 @@ function MainLoop() {
         // Apenas basta adicionar quando uma tecla é pressionada
         if (currentKeys.length > 0) {
             holdTime += deltaTime;
+
+            inactiveTime = 0;
         } else {
             holdTime = 0;
             holdActionStartTime = 0;
+
+            if (lastFocusedElement === focusedElement) {
+                inactiveTime += deltaTime;
+            }
         }
 
         // console.log(holdTime, holdActionStartTime);
@@ -2548,6 +2575,19 @@ function MainLoop() {
     const slidesArray = Array.from(main.querySelectorAll("#project-gallery figure"));
     const currentSlide = main.querySelector("figure[aria-current='true']");
 
+    // ---------------------------------------------- REINÍCIO DO WEBSITE -----------------------------------------------
+    // Após 3 minutos de inatividade, o website limpa os dados guardados e vai para a página inicial
+    if (inactiveTime >= 180000) {
+        localStorage.clear();
+
+        const jsURL = import.meta.url;
+        // console.log(jsURL);
+        const newURL = new URL("../../", jsURL);
+        // console.log(newURL.href);
+
+        window.location.href = newURL;
+    }
+
     // -------------------------------- CÁLCULO DO DELTA TIME E INÍCIO DA PRÓXIMA FRAME ---------------------------------
     lastFocusedElement = focusedElement;
 
@@ -2557,6 +2597,7 @@ function MainLoop() {
 
     lastFrame = currentFrame;
     // console.log(deltaTime);
+    // console.log(inactiveTime);
 
     // Reinicia o loop
     requestAnimationFrame(MainLoop);
