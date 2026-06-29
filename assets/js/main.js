@@ -247,16 +247,22 @@ document.addEventListener("mouse-focus", (e) => {
 const galleryButtons = main.querySelector("#gallery-buttons");
 
 // Isto faz com que, ao clicar no website, os botões da galeria sejam desfocados
-document.addEventListener("mousedown", () => {
+window.addEventListener("mousedown", () => {
     if (galleryButtons) galleryButtons.dispatchEvent(new Event("remove-focus"));
 
     document.dispatchEvent(new Event("mouse-focus"));
-
-    inactiveTime = 0;
 });
 
-document.addEventListener("mousemove", () => {
-    inactiveTime = 0;
+// Estes eventos fazem com que o tempo de inatividade seja reiniciado
+["mousedown", "mousemove", "scroll", "resize"].forEach((event) => {
+    window.addEventListener(event, () => {
+        inactiveTime = 0;
+    });
+});
+
+document.addEventListener("visibilitychange", () => {
+    // console.log(!document.hidden, document.visibilityState);
+    if (document.hidden) lastFrame = performance.now();
 });
 
 if (galleryButtons) {
@@ -2168,6 +2174,20 @@ function MainLoop() {
 
     const focusedElement = document.activeElement;
 
+    // ========================================= CÁLCULO DO DELTA TIME =========================================
+    lastFocusedElement = focusedElement;
+
+    // console.log(focusedElement, lastFocusedElement);
+
+    deltaTime = currentFrame - lastFrame; // tempo atual menos o tempo da frame anterior
+
+    lastFrame = currentFrame;
+    // console.log(deltaTime);
+    // console.log(inactiveTime);
+
+    // Se o salto entre frames for muito grande (ao sair do separador ou janela, por exemplo), assume o deltaTime como 50 ms, para retornar o ritmo natural
+    deltaTime = Math.min(deltaTime, 50);
+
     // console.log(writingMode);
 
     // console.log(currentKeys);
@@ -2178,6 +2198,7 @@ function MainLoop() {
     // }
     // console.log(galleryHoverTime);
 
+    // ========================================= TRATAMENTO DE CADA FRAME =========================================
     if (gamepad.length > 0) {
         gamepad.forEach((gamepadObject, i) => {
             // console.log(gamepadObject);
@@ -2192,8 +2213,6 @@ function MainLoop() {
                 } else {
                     GetGamepadInfo(gamepadObject);
                 }
-
-                inactiveTime = 0;
             }
 
             // Isto apenas faz arrays dos valores de todos os botões e dos eixos
@@ -2538,8 +2557,12 @@ function MainLoop() {
             }
 
             if (currentButtons.every((b) => b === 0) && currentKeys.length === 0 && lastFocusedElement === focusedElement) {
-                inactiveTime += deltaTime;
-            } else if (!currentButtons.every((b) => b === 0) || currentKeys.length > 0 || lastFocusedElement !== focusedElement) {
+                if (!document.hidden && document.hasFocus()) {
+                    inactiveTime += deltaTime;
+                } else {
+                    inactiveTime = 0;
+                }
+            } else {
                 inactiveTime = 0;
             }
 
@@ -2559,15 +2582,17 @@ function MainLoop() {
             holdTime = 0;
             holdActionStartTime = 0;
 
-            if (lastFocusedElement === focusedElement) {
+            if (lastFocusedElement === focusedElement && !document.hidden && document.hasFocus()) {
                 inactiveTime += deltaTime;
+            } else {
+                inactiveTime = 0;
             }
         }
 
         // console.log(holdTime, holdActionStartTime);
     }
 
-    // ----------------------------------- DESATIVAÇÃO DOS BOTÕES DE SCROLL E GALERIA -------------------------------------
+    // ====================================== DESATIVAÇÃO DOS BOTÕES DE SCROLL E GALERIA ======================================
 
     // Os botões de scroll
     const scrollUp = document.querySelector("#scroll-up button");
@@ -2599,7 +2624,7 @@ function MainLoop() {
     const slidesArray = Array.from(main.querySelectorAll("#project-gallery figure"));
     const currentSlide = main.querySelector("figure[aria-current='true']");
 
-    // ---------------------------------------------- REINÍCIO DO WEBSITE -----------------------------------------------
+    // ========================================= REINÍCIO DO WEBSITE =========================================
     // Após 3 minutos de inatividade, o website limpa os dados guardados e vai para a página inicial
     if (inactiveTime >= 180000) {
         localStorage.clear();
@@ -2612,17 +2637,7 @@ function MainLoop() {
         window.location.href = newURL;
     }
 
-    // -------------------------------- CÁLCULO DO DELTA TIME E INÍCIO DA PRÓXIMA FRAME ---------------------------------
-    lastFocusedElement = focusedElement;
-
-    // console.log(focusedElement, lastFocusedElement);
-
-    deltaTime = currentFrame - lastFrame; // tempo atual menos o tempo da frame anterior
-
-    lastFrame = currentFrame;
-    // console.log(deltaTime);
-    // console.log(inactiveTime);
-
+    // ========================================= INÍCIO DO PRÓXIMO FRAME =========================================
     // Reinicia o loop
     requestAnimationFrame(MainLoop);
 }
