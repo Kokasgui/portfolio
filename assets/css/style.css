@@ -333,14 +333,18 @@ form .button-link:has(button[type="submit"]) {
     position: relative;
     gap: 20px;
     justify-content: flex-start;
-    align-items: center;
+    align-items: flex-start;
     width: 100%;
+    flex-shrink: 0;
 }
 form .button-link:has(button[type="submit"])::after {
     content: "";
-    display: inline-block;
+    display: inline-flex;
     position: relative;
+    height: -webkit-fill-available;
+    height: stretch;
     text-align: start;
+    align-items: center;
     text-wrap: wrap;
     text-wrap: pretty;
 }
@@ -348,7 +352,7 @@ form.success .button-link:has(button[type="submit"])::after {
     content: "E-mail enviado com sucesso!";
 }
 form.failed .button-link:has(button[type="submit"])::after {
-    content: "Ocorreu um erro ao tentar enviar o e-mail...";
+    content: "Não foi possível enviar o e-mail...";
 }
 
 form * {
@@ -1944,6 +1948,10 @@ section:nth-of-type(even) .project-list li > a:hover {
     gap: 0.5em;
 }
 
+.project-links:not(:has(*)) {
+    margin-bottom: 64px;
+}
+
 /* Galeria */
 #project-gallery {
     display: flex;
@@ -2711,6 +2719,10 @@ footer #go-to-top a::before {
     }
     #project-abstract h2 {
         margin-bottom: 10px;
+    }
+
+    .project-links:not(:has(*)) {
+        margin-bottom: 48px;
     }
 
     #project-gallery {

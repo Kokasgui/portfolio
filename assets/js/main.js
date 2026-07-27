@@ -266,70 +266,72 @@ document.querySelector("#go-to-top > a").addEventListener("click", () => {
 });
 
 document.querySelectorAll("input").forEach((input) => {
-    const [group, key] = input.name.split(".");
-    // console.log(accessOptions[group][key]);
+    if (input.name.includes(".")) {
+        const [group, key] = input.name.split(".");
+        // console.log(accessOptions[group][key]);
 
-    input.addEventListener("input", () => {
-        if (input.getAttribute("type") === "range") {
-            input.parentElement.querySelector("output").innerText = `${(input.valueAsNumber / 1000).toFixed(2)} s`;
-            // Toca o som de range
-            PlaySound("range");
-        }
-    });
-    input.addEventListener("change", () => {
-        if (input.getAttribute("type") === "range") {
-            // Caso a range esteja no menu de opções
-            if (document.querySelector("#options").contains(input)) {
-                if (input.valueAsNumber !== accessOptions[group][key]) {
-                    accessOptions[group][key] = input.valueAsNumber;
-                    input.parentElement.querySelector("output").innerText = `${(input.valueAsNumber / 1000).toFixed(2)} s`;
+        input.addEventListener("input", () => {
+            if (input.getAttribute("type") === "range") {
+                input.parentElement.querySelector("output").innerText = `${(input.valueAsNumber / 1000).toFixed(2)} s`;
+                // Toca o som de range
+                PlaySound("range");
+            }
+        });
+        input.addEventListener("change", () => {
+            if (input.getAttribute("type") === "range") {
+                // Caso a range esteja no menu de opções
+                if (document.querySelector("#options").contains(input)) {
+                    if (input.valueAsNumber !== accessOptions[group][key]) {
+                        accessOptions[group][key] = input.valueAsNumber;
+                        input.parentElement.querySelector("output").innerText = `${(input.valueAsNumber / 1000).toFixed(2)} s`;
+                    }
                 }
             }
-        }
-        if (input.getAttribute("type") === "checkbox") {
-            // console.log(input);
+            if (input.getAttribute("type") === "checkbox") {
+                // console.log(input);
 
-            // Caso a checkbox esteja no menu de opções ou noutro popup
-            if (document.querySelector("#options").contains(input) || document.querySelector("#exit-popup").contains(input)) {
-                // Toca sempre o som de checkbox ao se desativar os efeitos sonoros
+                // Caso a checkbox esteja no menu de opções ou noutro popup
+                if (document.querySelector("#options").contains(input) || document.querySelector("#exit-popup").contains(input)) {
+                    // Toca sempre o som de checkbox ao se desativar os efeitos sonoros
+                    if (accessOptions.general.soundEffects === true) {
+                        PlaySound("moverSeccao-checkbox");
+                    }
+                    if (input.checked !== accessOptions[group][key]) {
+                        accessOptions[group][key] = input.checked;
+
+                        // console.log(input.name);
+
+                        if (input.getAttribute("name") === "general.scrollButtons") {
+                            const scrollButtons = document.querySelector("#scroll-buttons");
+
+                            if (accessOptions.general.scrollButtons === true) {
+                                if (scrollButtons.hasAttribute("style")) {
+                                    scrollButtons.removeAttribute("style");
+                                }
+                            } else if (accessOptions.general.scrollButtons === false) {
+                                scrollButtons.style.display = "none";
+                            }
+                        }
+
+                        if (input.name === "controller.rememberExit") {
+                            if (input.getAttribute("id").includes("clone")) {
+                                document.querySelector("input[id='controller.rememberExit']").checked = input.checked;
+                            } else {
+                                document.querySelector("input[id='controller.rememberExit-clone']").checked = input.checked;
+                            }
+                        }
+                    }
+                }
+                // Toca o som de checkbox
                 if (accessOptions.general.soundEffects === true) {
                     PlaySound("moverSeccao-checkbox");
                 }
-                if (input.checked !== accessOptions[group][key]) {
-                    accessOptions[group][key] = input.checked;
-
-                    // console.log(input.name);
-
-                    if (input.getAttribute("name") === "general.scrollButtons") {
-                        const scrollButtons = document.querySelector("#scroll-buttons");
-
-                        if (accessOptions.general.scrollButtons === true) {
-                            if (scrollButtons.hasAttribute("style")) {
-                                scrollButtons.removeAttribute("style");
-                            }
-                        } else if (accessOptions.general.scrollButtons === false) {
-                            scrollButtons.style.display = "none";
-                        }
-                    }
-
-                    if (input.name === "controller.rememberExit") {
-                        if (input.getAttribute("id").includes("clone")) {
-                            document.querySelector("input[id='controller.rememberExit']").checked = input.checked;
-                        } else {
-                            document.querySelector("input[id='controller.rememberExit-clone']").checked = input.checked;
-                        }
-                    }
-                }
             }
-            // Toca o som de checkbox
-            if (accessOptions.general.soundEffects === true) {
-                PlaySound("moverSeccao-checkbox");
-            }
-        }
 
-        // console.log(`A enviar valor ${accessOptions[group][key]} da chave ${input.name} para o localStorage`);
-        localStorage.setItem(input.name, JSON.stringify(accessOptions[group][key]));
-    });
+            // console.log(`A enviar valor ${accessOptions[group][key]} da chave ${input.name} para o localStorage`);
+            localStorage.setItem(input.name, JSON.stringify(accessOptions[group][key]));
+        });
+    }
 });
 
 document.querySelector("#background").addEventListener("click", (e) => {
@@ -1030,10 +1032,14 @@ function UpdateActionBar(gamepadType) {
             span.appendChild(img);
         }
 
+        // Caso o input venha de um comando de jogo ou teclado
         if (!gamepadType) {
             img.src = `${newURL.href}keyboard/${imgName}.png`;
             img.alt = "";
         } else {
+            // Caso estejamos com um comando de jogo e a ação seja sair do formulário, mostra o ícone de voltar
+            if (imgName === "stopWrite") imgName = "return";
+
             img.src = `${newURL.href}${gamepadType}/${imgName}.png`;
             img.alt = "";
         }

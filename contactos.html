@@ -57,15 +57,24 @@
         window.onload = function () {
             document.querySelector("#contact-form").addEventListener("submit", function (event) {
                 event.preventDefault();
+                if (this.classList.contains("success") || this.classList.contains("failed")) {
+                    this.classList.remove("success", "failed");
+                }
+                const submitButton = this.querySelector("#contact-form button[type='submit']");
+                if (document.activeElement === submitButton) document.querySelector("section").focus();
+                submitButton.disabled = true;
+
                 // these IDs from the previous steps
                 emailjs.sendForm('service_pkqp555', 'contact_form', this)
                     .then(() => {
                         console.log('SUCCESS!');
+                        submitButton.disabled = false;
                         if (!this.classList.contains("success")) {
                             this.classList.add("success");
                         }
                     }, (error) => {
                         console.error('FAILED...', error);
+                        submitButton.disabled = false;
                         if (!this.classList.contains("failed")) {
                             this.classList.add("failed");
                         }
@@ -208,14 +217,14 @@
             <div>
                 <!-- Secção com CV e portfólio em PDF -->
                 <div>
-                    <p>Preenche o formulário de contacto ou então descarrega os documentos que estão em baixo:</p>
+                    <p>Preenche o formulário de contacto ou então descarrega os documentos PDF que estão em baixo:</p>
                     <div id="pdf-buttons">
                         <span class="button-link">
-                            <a href="./assets/docs/cv-old.pdf" download="CV Guilherme Costa (antigo)">CV (PDF)</a>
+                            <a href="./assets/docs/cv.pdf" download="CV Guilherme Costa">CV (400 KB)</a>
                         </span>
                         <span class="button-link">
-                            <a href="./assets/docs/portfolio-old.pdf"
-                                download="Portfólio Guilherme Costa (antigo)">Portfólio (PDF)</a>
+                            <a href="./assets/docs/portfolio.pdf" download="Portfólio Guilherme Costa">Portfólio
+                                (20 MB)</a>
                         </span>
                     </div>
                 </div>
