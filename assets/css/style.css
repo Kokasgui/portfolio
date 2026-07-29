@@ -341,8 +341,7 @@ form .button-link:has(button[type="submit"])::after {
     content: "";
     display: inline-flex;
     position: relative;
-    height: -webkit-fill-available;
-    height: stretch;
+    min-height: calc(20px + 1em);
     text-align: start;
     align-items: center;
     text-wrap: wrap;
