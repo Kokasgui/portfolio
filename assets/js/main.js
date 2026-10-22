@@ -1,6 +1,8 @@
 const jsURL = import.meta.url;
 // console.log(jsURL);
 
+let audioContext;
+
 let deltaTime = 0;
 
 let writingMode = true;
@@ -15,7 +17,7 @@ const sounds = {
     select: "select.mp3",
     back: "back.mp3",
     move: "move.mp3",
-    switch: "switch.mp3",
+    switch: "switch2.mp3",
     range: "range.mp3",
     popup: "popup.mp3",
 };
@@ -52,8 +54,18 @@ const loading = document.querySelector("#loading");
 // Lista das secções e footer
 const sectionFooter = document.querySelectorAll("section, footer");
 
+window.addEventListener("loadstart", (e) => {
+    // Precarrega todos os efeitos sonoros
+    for (let i = 0; i < Object.keys(sounds).length; i++) {
+        const soundName = Object.keys(sounds)[i];
+
+        // console.log(`A tentar carregar efeito sonoro ${soundName}`);
+        LoadAudio(`${soundName}.mp3`);
+        // console.log(`Efeito sonoro ${soundName} carregado`);
+    }
+});
+
 window.addEventListener("load", (e) => {
-    // Tentar carregar todas as imagens com antecedência
     UpdateActionBar(null);
 
     // Ao carregar o site, esconde todas as secções
@@ -470,10 +482,9 @@ function ToggleIntroScreen() {
 }
 
 // ================================================= EFEITOS SONOROS ================================================
-let audioContext;
 const audioCache = new Map();
 
-function playBuffer(buffer) {
+function PlayBuffer(buffer) {
     if (!buffer) return;
     // else console.log(buffer);
 
@@ -486,8 +497,12 @@ function playBuffer(buffer) {
     source.start();
 }
 
-async function loadAudio(sound) {
+async function LoadAudio(sound) {
     // console.log(sound);
+
+    if (!audioContext) {
+        audioContext = new AudioContext();
+    }
 
     // Se o efeito sonoro já tiver sido descodificado, utiliza o buffer que foi guardado em cache
     if (audioCache.has(sound)) {
@@ -499,7 +514,7 @@ async function loadAudio(sound) {
         // console.log(newURL.href);
 
         const response = await fetch(`${newURL}${sound}`);
-        console.log(response);
+        // console.log(response);
 
         let buffer;
         try {
@@ -519,10 +534,7 @@ async function PlaySound(sound) {
     if (!sound) console.error("Som a reproduzir não foi definido!");
     // else console.log(sound);
 
-    if (!audioContext) {
-        audioContext = new AudioContext();
-    }
-    playBuffer(await loadAudio(sound));
+    PlayBuffer(await LoadAudio(sound));
 }
 
 // ================================================== GALERIA DE PROJETOS =================================================
