@@ -1,3 +1,6 @@
+const jsURL = import.meta.url;
+// console.log(jsURL);
+
 let deltaTime = 0;
 
 let writingMode = true;
@@ -7,6 +10,15 @@ const main = document.querySelector("main");
 const footer = document.querySelector("footer");
 
 const reducedMotionDetector = document.querySelector("#reduced-motion-detector");
+
+const sounds = {
+    select: "select.mp3",
+    back: "back.mp3",
+    move: "move.mp3",
+    switch: "switch.mp3",
+    range: "range.mp3",
+    popup: "popup.mp3",
+};
 
 const navButton = document.querySelector("#nav-icon button");
 
@@ -200,8 +212,6 @@ softwareList.forEach((software) => {
     if (icon) {
         const picture = document.createElement("picture");
 
-        const jsURL = import.meta.url;
-        // console.log(jsURL);
         const newURL = new URL("../software-icons", jsURL);
         // console.log(newURL.href);
 
@@ -274,7 +284,7 @@ document.querySelectorAll("input").forEach((input) => {
             if (input.getAttribute("type") === "range") {
                 input.parentElement.querySelector("output").innerText = `${(input.valueAsNumber / 1000).toFixed(2)} s`;
                 // Toca o som de range
-                PlaySound("range");
+                PlaySound(sounds.switch);
             }
         });
         input.addEventListener("change", () => {
@@ -294,7 +304,7 @@ document.querySelectorAll("input").forEach((input) => {
                 if (document.querySelector("#options").contains(input) || document.querySelector("#exit-popup").contains(input)) {
                     // Toca sempre o som de checkbox ao se desativar os efeitos sonoros
                     if (accessOptions.general.soundEffects === true) {
-                        PlaySound("moverSeccao-checkbox");
+                        PlaySound(sounds.switch);
                     }
                     if (input.checked !== accessOptions[group][key]) {
                         accessOptions[group][key] = input.checked;
@@ -324,7 +334,7 @@ document.querySelectorAll("input").forEach((input) => {
                 }
                 // Toca o som de checkbox
                 if (accessOptions.general.soundEffects === true) {
-                    PlaySound("moverSeccao-checkbox");
+                    PlaySound(sounds.switch);
                 }
             }
 
@@ -342,7 +352,7 @@ document.querySelector("#background").addEventListener("click", (e) => {
 
 document.querySelectorAll("a").forEach((a) => {
     a.addEventListener("click", () => {
-        PlaySound("selecionar");
+        PlaySound(sounds.select);
     });
 });
 
@@ -460,20 +470,59 @@ function ToggleIntroScreen() {
 }
 
 // ================================================= EFEITOS SONOROS ================================================
-function PlaySound(sound) {
-    if (!sound) console.error("Som a reproduzir não foi definido!");
+let audioContext;
+const audioCache = new Map();
+
+function playBuffer(buffer) {
+    if (!buffer) return;
+    // else console.log(buffer);
+
+    // console.log("A criar bufferSource");
+    const source = audioContext.createBufferSource();
+    source.buffer = buffer;
+
+    // console.log("A tentar reproduzir");
+    source.connect(audioContext.destination);
+    source.start();
+}
+
+async function loadAudio(sound) {
     // console.log(sound);
 
-    const soundEffect = document.querySelector(`#${sound}`);
-    // console.log(soundEffect);
-
-    // console.log(accessOptions.general.soundEffects);
-
-    // Se a primeira interação no site for utilizar os sticks analógicos, não vai reproduzir nenhum som porque os sticks não contam como uma interação do utilizador
-    if (accessOptions.general.soundEffects === true) {
-        soundEffect.currentTime = 0;
-        soundEffect.play();
+    // Se o efeito sonoro já tiver sido descodificado, utiliza o buffer que foi guardado em cache
+    if (audioCache.has(sound)) {
+        return audioCache.get(sound);
     }
+
+    try {
+        const newURL = new URL("../audio/", jsURL);
+        // console.log(newURL.href);
+
+        const response = await fetch(`${newURL}${sound}`);
+        console.log(response);
+
+        let buffer;
+        try {
+            buffer = audioContext.decodeAudioData(await response.arrayBuffer());
+            // Guarda o buffer do áudio descodificado em cache
+            audioCache.set(sound, buffer);
+            return buffer;
+        } catch (err) {
+            console.error(`Não foi possível descodificar o áudio ${sound}`, err);
+        }
+    } catch (err) {
+        console.error(`Não foi possível carregar o áudio ${sound}`, err);
+    }
+}
+
+async function PlaySound(sound) {
+    if (!sound) console.error("Som a reproduzir não foi definido!");
+    // else console.log(sound);
+
+    if (!audioContext) {
+        audioContext = new AudioContext();
+    }
+    playBuffer(await loadAudio(sound));
 }
 
 // ================================================== GALERIA DE PROJETOS =================================================
@@ -551,7 +600,7 @@ function ChangeGallerySlide(direction) {
         });
         currentSlide.removeAttribute("aria-current");
         slidesArray[currentSlideIndex + direction].setAttribute("aria-current", "true");
-        PlaySound("mover");
+        PlaySound(sounds.move);
     }
 
     if (currentSlideIndex + direction === 0 || currentSlideIndex + direction === slidesArray.length - 1) {
@@ -584,12 +633,12 @@ function PlayAnimation(element) {
 
     if (element.tagName === "FIGURE") {
         ToggleGalleryVideo(element.querySelector("video"));
-        PlaySound("mover");
+        PlaySound(sounds.move);
     } else {
         if (element.tagName === "VIDEO" && (element.ended || element.currentTime === 0)) {
             // element.currentTime = 0;
             element.play();
-            PlaySound("mover");
+            PlaySound(sounds.move);
         }
     }
 }
@@ -1020,8 +1069,6 @@ function UpdateActionBar(gamepadType) {
         const actionType = actionArray[i].getAttribute("action");
         const span = actionArray[i].querySelector("span");
 
-        const jsURL = import.meta.url;
-        // console.log(jsURL);
         const newURL = new URL("../action-icons/", jsURL);
         // console.log(newURL.href);
 
@@ -1168,24 +1215,26 @@ document.addEventListener("keydown", (e) => {
                                 document.querySelector("#exit-popup").getAttribute("aria-hidden") === "true"
                             ) {
                                 main.querySelector("section").focus();
-                                if (!intro || (intro && intro.opacity === 0)) {
-                                    PlaySound("mover");
+
+                                // debugger;
+                                if (!intro || (intro && parseInt(getComputedStyle(intro).opacity) === 0)) {
+                                    PlaySound(sounds.move);
                                 }
                             } else if (
                                 navButton.getAttribute("aria-expanded") === "false" &&
                                 document.querySelector("#exit-popup").getAttribute("aria-hidden") === "false"
                             ) {
                                 document.querySelector("#exit-popup #cancel").focus();
-                                PlaySound("mover");
+                                PlaySound(sounds.move);
                             } else if (
                                 navButton.getAttribute("aria-expanded") === "true" &&
                                 document.querySelector("#options").getAttribute("aria-hidden") === "true"
                             ) {
                                 document.querySelector("#nav-list li > a").focus();
-                                PlaySound("mover");
+                                PlaySound(sounds.move);
                             } else if (document.querySelector("#options").getAttribute("aria-hidden") === "false") {
                                 document.querySelector("#options input").focus();
-                                PlaySound("mover");
+                                PlaySound(sounds.move);
                             }
 
                             UpdateActionBar(null);
@@ -1311,7 +1360,7 @@ document.addEventListener("keydown", (e) => {
 
             // Toca o som da ação
             if (sawIntro) {
-                PlaySound("mover");
+                PlaySound(sounds.move);
             }
 
             document.dispatchEvent(new Event("mouse-focus"));
@@ -1373,7 +1422,7 @@ function ActionsMegaFunction(action, device) {
             else if (focusedElement === footer.querySelector("#go-to-top > a")) {
                 main.querySelector("section").focus();
                 footer.querySelector("#go-to-top > a").animate(buttonWiggleAnimation, { duration: 150, iterations: 1 });
-                PlaySound("selecionar");
+                PlaySound(sounds.select);
                 UpdateActionBar(device);
                 // return;
             }
@@ -1397,7 +1446,7 @@ function ActionsMegaFunction(action, device) {
                             if (focusedElement.tagName === "INPUT" || focusedElement.tagName === "TEXTAREA") {
                                 writingMode = true;
                                 focusedElement.dispatchEvent(new Event("focus"));
-                                PlaySound("selecionar");
+                                PlaySound(sounds.select);
 
                                 if ("virtualKeyboard" in navigator) {
                                     navigator.virtualKeyboard.show();
@@ -1450,7 +1499,7 @@ function ActionsMegaFunction(action, device) {
                     if (focusedElement.tagName === "INPUT" || focusedElement.tagName === "TEXTAREA") {
                         if (writingMode) {
                             writingMode = false;
-                            PlaySound("recuar");
+                            PlaySound(sounds.back);
                             focusedElement.dispatchEvent(new Event("focus"));
 
                             if ("virtualKeyboard" in navigator) {
@@ -1485,7 +1534,7 @@ function ToggleExitPopup(input, link) {
     if (exitPopup.getAttribute("aria-hidden") === "true") {
         exitPopup.setAttribute("aria-hidden", "false");
         background.classList.replace("menu-closed", "popup-open");
-        PlaySound("popups");
+        PlaySound(sounds.popup);
 
         exitPopup.querySelectorAll("[tabindex='-1']").forEach((element) => {
             element.setAttribute("tabindex", "0");
@@ -1503,7 +1552,7 @@ function ToggleExitPopup(input, link) {
             element.setAttribute("tabindex", "-1");
         });
 
-        // PlaySound("selecionar");
+        // PlaySound(sounds.select);
     }
 }
 
@@ -1578,7 +1627,7 @@ function ToggleNavMenu(input) {
         if (input !== "mouse") main.querySelector("section").focus();
     }
 
-    PlaySound("popups");
+    PlaySound(sounds.popup);
 
     // if(input === "keyboard") input = null;
     UpdateActionBar(null);
@@ -1644,7 +1693,7 @@ function ToggleAccessOptions(input) {
         // }, 50);
     }
 
-    PlaySound("popups");
+    PlaySound(sounds.popup);
 }
 
 function EnterSelection() {
@@ -1664,11 +1713,11 @@ function EnterSelection() {
                         galleryButtons.classList.add("focused");
                     }
                     galleryButtons.focus();
-                    PlaySound("mover");
+                    PlaySound(sounds.move);
                     break;
                 }
                 interactibleChild.focus();
-                PlaySound("selecionar");
+                PlaySound(sounds.select);
                 break;
             }
         }
@@ -1692,7 +1741,7 @@ function ExitSelection() {
             }
 
             parent.focus();
-            PlaySound("recuar");
+            PlaySound(sounds.back);
         }
 
         // alert("falta programar esta parte!");
@@ -1710,7 +1759,7 @@ function MoveSelection(direction, columnOrRow) {
 
     if (focusedElement.classList.contains("mouse-focus")) {
         focusedElement.focus();
-        PlaySound("mover");
+        PlaySound(sounds.move);
         return;
     }
 
@@ -1788,7 +1837,7 @@ function MoveSelection(direction, columnOrRow) {
                                 input.stepUp();
                                 // console.log(input.valueAsNumber, parseInt(input.max));
 
-                                PlaySound("range");
+                                PlaySound(sounds.switch);
                                 input.dispatchEvent(new Event("change"));
                             }
                         } else if (direction === -1) {
@@ -1796,7 +1845,7 @@ function MoveSelection(direction, columnOrRow) {
                                 input.stepDown();
                                 // console.log(input.valueAsNumber, parseInt(input.min));
 
-                                PlaySound("range");
+                                PlaySound(sounds.switch);
                                 input.dispatchEvent(new Event("change"));
                             }
                         }
@@ -1876,7 +1925,7 @@ function MoveSelection(direction, columnOrRow) {
 
                     if (elementList[i] === footer && columnOrRow === "column") {
                         footer.focus();
-                        PlaySound("moverSeccao-checkbox");
+                        PlaySound(sounds.switch);
                         return;
                     }
                 }
@@ -1888,7 +1937,7 @@ function MoveSelection(direction, columnOrRow) {
 
                     if (elementList[i].tagName === "SECTION" && columnOrRow === "column") {
                         elementList[i].focus();
-                        PlaySound("moverSeccao-checkbox");
+                        PlaySound(sounds.switch);
                         return;
                     } else {
                         // debugger;
@@ -1914,7 +1963,7 @@ function MoveSelection(direction, columnOrRow) {
                                 if (elementList[i].querySelector("section")) {
                                     const mainChildren = Array.from(main.children);
                                     mainChildren[mainChildren.length - 1].focus();
-                                    PlaySound("moverSeccao-checkbox");
+                                    PlaySound(sounds.switch);
                                     return;
                                 }
                             }
@@ -1939,7 +1988,7 @@ function MoveSelection(direction, columnOrRow) {
                                 if (interactibleList.length !== 0) {
                                     // console.log(interactibleList[interactibleList.length - 1]);
                                     interactibleList[interactibleList.length - 1].focus();
-                                    PlaySound("mover");
+                                    PlaySound(sounds.move);
                                     return;
                                 }
                             } else {
@@ -1947,7 +1996,7 @@ function MoveSelection(direction, columnOrRow) {
                                 // console.log(summary);
                                 if (summary) {
                                     summary.focus();
-                                    PlaySound("mover");
+                                    PlaySound(sounds.move);
                                     return;
                                 }
                             }
@@ -1970,7 +2019,7 @@ function MoveSelection(direction, columnOrRow) {
                                     // se o próximo/anterior item for um <a> ou <button> ou outro, foca
 
                                     elementList[i].focus();
-                                    PlaySound("mover");
+                                    PlaySound(sounds.move);
                                     return;
                                 } else if (elementList[i].querySelector("a, button:not([disabled]), [tabindex='0'], input, textarea, summary")) {
                                     // console.log(elementList[i].querySelector("a, button, [tabindex='0'], input, summary"));
@@ -1987,7 +2036,7 @@ function MoveSelection(direction, columnOrRow) {
                                             galleryButtons.classList.add("focused");
                                         }
                                         galleryButtons.focus();
-                                        PlaySound("mover");
+                                        PlaySound(sounds.move);
                                         return;
                                     }
 
@@ -2002,7 +2051,7 @@ function MoveSelection(direction, columnOrRow) {
                                             }
                                         }
                                         array[0].focus();
-                                        PlaySound("mover");
+                                        PlaySound(sounds.move);
                                     } else if (direction === -1 && !footer.contains(elementList[i])) {
                                         const summary = elementList[i].querySelector("summary");
                                         if (summary) {
@@ -2013,7 +2062,7 @@ function MoveSelection(direction, columnOrRow) {
                                             }
                                         }
                                         array[array.length - 1].focus();
-                                        PlaySound("mover");
+                                        PlaySound(sounds.move);
                                     }
 
                                     return;
@@ -2030,7 +2079,7 @@ function MoveSelection(direction, columnOrRow) {
                                     // se o próximo/anterior item for um <a> ou <button> ou outro, foca
 
                                     elementList[i].focus();
-                                    PlaySound("mover");
+                                    PlaySound(sounds.move);
                                     return;
                                 } else if (elementList[i].querySelector("a, button:not([disabled]), [tabindex='0'], input, textarea, summary")) {
                                     /*const newElementArray = Array.from(elementList[i].children);
@@ -2082,10 +2131,10 @@ function MoveSelection(direction, columnOrRow) {
 
                                     if (direction === 1) {
                                         array[0].focus();
-                                        PlaySound("mover");
+                                        PlaySound(sounds.move);
                                     } else if (direction === -1) {
                                         array[array.length - 1].focus();
-                                        PlaySound("mover");
+                                        PlaySound(sounds.move);
                                     }
                                     return;
                                 }
@@ -2127,7 +2176,7 @@ function Scroll(direction) {
 
     // Faz scroll para cima ou para baixo, consoante a direção
     window.scrollBy(0, (window.innerHeight / 2) * direction);
-    PlaySound("selecionar");
+    PlaySound(sounds.select);
 
     let scrollButton;
     if (direction === -1) scrollButton = document.querySelector("#scroll-up");
@@ -2340,24 +2389,24 @@ function MainLoop() {
                                     document.querySelector("#exit-popup").getAttribute("aria-hidden") === "true"
                                 ) {
                                     main.querySelector("section").focus();
-                                    if (!intro || (intro && intro.opacity === 0)) {
-                                        PlaySound("mover");
+                                    if (!intro || (intro && parseInt(getComputedStyle(intro).opacity) === 0)) {
+                                        PlaySound(sounds.move);
                                     }
                                 } else if (
                                     navButton.getAttribute("aria-expanded") === "false" &&
                                     document.querySelector("#exit-popup").getAttribute("aria-hidden") === "false"
                                 ) {
                                     document.querySelector("#exit-popup #cancel").focus();
-                                    PlaySound("mover");
+                                    PlaySound(sounds.move);
                                 } else if (
                                     navButton.getAttribute("aria-expanded") === "true" &&
                                     document.querySelector("#options").getAttribute("aria-hidden") === "true"
                                 ) {
                                     document.querySelector("#nav-list a").focus();
-                                    PlaySound("mover");
+                                    PlaySound(sounds.move);
                                 } else if (document.querySelector("#options").getAttribute("aria-hidden") === "false") {
                                     document.querySelector("#options input").focus();
-                                    PlaySound("mover");
+                                    PlaySound(sounds.move);
                                 }
                                 GetGamepadInfo(gamepadObject);
 
@@ -2446,24 +2495,24 @@ function MainLoop() {
                                 document.querySelector("#exit-popup").getAttribute("aria-hidden") === "true"
                             ) {
                                 main.querySelector("section").focus();
-                                if (!intro || (intro && intro.opacity === 0)) {
-                                    PlaySound("mover");
+                                if (!intro || (intro && parseInt(getComputedStyle(intro).opacity) === 0)) {
+                                    PlaySound(sounds.move);
                                 }
                             } else if (
                                 navButton.getAttribute("aria-expanded") === "false" &&
                                 document.querySelector("#exit-popup").getAttribute("aria-hidden") === "false"
                             ) {
                                 document.querySelector("#exit-popup #cancel").focus();
-                                PlaySound("mover");
+                                PlaySound(sounds.move);
                             } else if (
                                 navButton.getAttribute("aria-expanded") === "true" &&
                                 document.querySelector("#options").getAttribute("aria-hidden") === "true"
                             ) {
                                 document.querySelector("#nav-list a").focus();
-                                PlaySound("mover");
+                                PlaySound(sounds.move);
                             } else if (document.querySelector("#options").getAttribute("aria-hidden") === "false") {
                                 document.querySelector("#options input").focus();
-                                PlaySound("mover");
+                                PlaySound(sounds.move);
                             }
                             GetGamepadInfo(gamepadObject);
 
