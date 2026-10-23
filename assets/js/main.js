@@ -17,7 +17,7 @@ const sounds = {
     select: "select.mp3",
     back: "back.mp3",
     move: "move.mp3",
-    switch: "switch2.mp3",
+    switch: "switch.mp3",
     range: "range.mp3",
     popup: "popup.mp3",
 };
@@ -54,7 +54,7 @@ const loading = document.querySelector("#loading");
 // Lista das secções e footer
 const sectionFooter = document.querySelectorAll("section, footer");
 
-window.addEventListener("loadstart", (e) => {
+document.addEventListener("DOMContentLoaded", (e) => {
     // Precarrega todos os efeitos sonoros
     for (let i = 0; i < Object.keys(sounds).length; i++) {
         const soundName = Object.keys(sounds)[i];
