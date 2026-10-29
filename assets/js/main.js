@@ -534,7 +534,8 @@ async function PlaySound(sound) {
     if (!sound) console.error("Som a reproduzir não foi definido!");
     // else console.log(sound);
 
-    PlayBuffer(await LoadAudio(sound));
+    // Só toca o efeito sonoro se a opção dos efeitos sonoros estiver ativada
+    if (accessOptions.general.soundEffects) PlayBuffer(await LoadAudio(sound));
 }
 
 // ================================================== GALERIA DE PROJETOS =================================================
